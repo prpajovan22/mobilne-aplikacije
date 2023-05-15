@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".KoZnaZnaActivity">
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -13,7 +15,6 @@
             android:gravity="center"
             android:orientation="vertical"
             android:layout_marginTop="130dp">
-
 
             <TextView
                 android:id="@+id/pitanjeKoZnaZna"
@@ -61,6 +62,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:text="Propusti"
+                />
+            <Button
+                android:id="@+id/odustani"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="Odustani"
                 />
         </LinearLayout>
 
