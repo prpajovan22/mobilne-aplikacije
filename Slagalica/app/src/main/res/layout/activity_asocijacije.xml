@@ -1,9 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".AsocijacijeActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginLeft="15dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/a1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A1" />
+
+            <Button
+                android:id="@+id/a2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A2" />
+
+            <Button
+                android:id="@+id/a3Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A3" />
+
+            <Button
+                android:id="@+id/a4Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A4" />
+
+            <EditText
+                android:id="@+id/aKolonaAsocijacija"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="8"
+                android:hint="A"
+                android:inputType="text"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/b1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B1" />
+
+            <Button
+                android:id="@+id/b2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B2" />
+
+            <Button
+                android:id="@+id/b3Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B3" />
+
+            <Button
+                android:id="@+id/b4Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B4" />
+
+            <EditText
+                android:id="@+id/bKolonaAsocijacija"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="8"
+                android:hint="B"
+                android:inputType="text"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/resenje"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="Resenje" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/c1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C1"/>
+
+            <Button
+                android:id="@+id/c2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C2"/>
+            <Button
+                android:id="@+id/c3Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C3" />
+
+            <Button
+                android:id="@+id/c4Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C4" />
+
+            <EditText
+                android:id="@+id/cKolonaAsocijacija"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="8"
+                android:hint="A"
+                android:inputType="text"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="30dp">
+
+            <Button
+                android:id="@+id/d1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D1"/>
+
+            <Button
+                android:id="@+id/d2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D2"/>
+
+            <Button
+                android:id="@+id/d3Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D3" />
+
+            <Button
+                android:id="@+id/d4Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D4" />
+
+            <EditText
+                android:id="@+id/dKolonaAsocijacija"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="8"
+                android:hint="D"
+                android:inputType="text"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/zavrsi"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:text="Odistani" />
+
+</LinearLayout>
