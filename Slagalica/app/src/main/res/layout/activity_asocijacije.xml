@@ -8,6 +8,20 @@
     android:gravity="center"
     tools:context=".AsocijacijeActivity">
 
+    <TextView
+        android:id="@+id/countdownText"
+        android:layout_width="134dp"
+        android:layout_height="30dp"
+        tools:text="00:10"
+        android:textSize="25sp"
+        android:textAlignment="center"/>
+    <Button
+        android:id="@+id/countdown_button"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:text="start" />
+
     <LinearLayout
         android:layout_width="383dp"
         android:layout_height="wrap_content"
