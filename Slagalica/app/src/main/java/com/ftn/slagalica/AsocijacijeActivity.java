@@ -22,16 +22,17 @@ public class AsocijacijeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asocijacije);
 
-        countdownText = findViewById(R.id.countdownText);
-        countdownButton = findViewById(R.id.countdown_button);
+        startStop();
 
-        countdownButton.setOnClickListener( new View.OnClickListener(){
+        countdownText = findViewById(R.id.countdownText);
+
+        /*countdownButton.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 startStop();
             }
 
-        });
+        });*/
     }
 
     public void startStop(){
@@ -54,13 +55,11 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
             }
         }.start();
-        countdownButton.setText("Pause");
         timeRunning = true;
     }
 
     public void stopTimer(){
         countDownTimer.cancel();
-        countdownButton.setText("Start");
         timeRunning = false;
     }
     public void updateTimer(){
