@@ -23,13 +23,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
         countdownText = findViewById(R.id.countdownText);
         timer.getTime();
-        /*countdownButton.setOnClickListener( new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                startStop();
-            }
 
-        });*/
     }
 
 }

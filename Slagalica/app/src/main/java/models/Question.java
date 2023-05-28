@@ -1,18 +1,20 @@
 package models;
 
-public class QuestionsAndSolutions {
+import java.util.List;
+
+public class Question {
 
     private int id;
     private String question;
-    private String solution;
+    private List<Solutions> solution;
 
-    public QuestionsAndSolutions(int id, String question, String solution) {
+    public Question(int id, String question, List<Solutions> solution) {
         this.id = id;
         this.question = question;
         this.solution = solution;
     }
 
-    public QuestionsAndSolutions(String question, String solution) {
+    public Question(String question, List<Solutions> solution) {
         this.question = question;
         this.solution = solution;
     }
@@ -33,11 +35,11 @@ public class QuestionsAndSolutions {
         this.question = question;
     }
 
-    public String getSolution() {
+    public List<Solutions> getSolution() {
         return solution;
     }
 
-    public void setSolution(String solution) {
+    public void setSolution(List<Solutions> solution) {
         this.solution = solution;
     }
 }
