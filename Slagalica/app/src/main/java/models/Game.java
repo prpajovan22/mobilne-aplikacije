@@ -3,17 +3,17 @@ package models;
 public class Game {
 
     private int id;
-    private String score;
+    private int score;
     private int numberOfRounds;
     private long timeOnTheRound;
 
-    public Game(String score, int numberOfRounds, long timeOnTheRound) {
+    public Game(int score, int numberOfRounds, long timeOnTheRound) {
         this.score = score;
         this.numberOfRounds = numberOfRounds;
         this.timeOnTheRound = timeOnTheRound;
     }
 
-    public Game(int id, String score, int numberOfRounds, long timeOnTheRound) {
+    public Game(int id, int score, int numberOfRounds, long timeOnTheRound) {
         this.id = id;
         this.score = score;
         this.numberOfRounds = numberOfRounds;
@@ -28,11 +28,11 @@ public class Game {
         this.id = id;
     }
 
-    public String getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
