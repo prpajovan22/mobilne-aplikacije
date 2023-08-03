@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button profil = findViewById(R.id.profile);
         Button start = findViewById(R.id.start);
+        Button login = findViewById(R.id.login);
+        Button register = findViewById(R.id.register);
 
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,6 +32,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Login.class);
+
+                startActivity(intent);
+            }
+        });
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
 
                 startActivity(intent);
             }
