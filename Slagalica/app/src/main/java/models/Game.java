@@ -1,23 +1,20 @@
 package models;
 
+import java.sql.Time;
+
 public class Game {
 
     private int id;
-    private int score;
-    private int numberOfRounds;
-    private long timeOnTheRound;
 
-    public Game(int score, int numberOfRounds, long timeOnTheRound) {
-        this.score = score;
-        this.numberOfRounds = numberOfRounds;
-        this.timeOnTheRound = timeOnTheRound;
-    }
+    private int score1;
 
-    public Game(int id, int score, int numberOfRounds, long timeOnTheRound) {
+    private int score2;
+
+
+    public Game(int id, int score1, int score2) {
         this.id = id;
-        this.score = score;
-        this.numberOfRounds = numberOfRounds;
-        this.timeOnTheRound = timeOnTheRound;
+        this.score1 = score1;
+        this.score2 = score2;
     }
 
     public int getId() {
@@ -28,28 +25,19 @@ public class Game {
         this.id = id;
     }
 
-    public int getScore() {
-        return score;
+    public int getScore1() {
+        return score1;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setScore1(int score1) {
+        this.score1 = score1;
     }
 
-    public int getNumberOfRounds() {
-        return numberOfRounds;
+    public int getScore2() {
+        return score2;
     }
 
-    public void setNumberOfRounds(int numberOfRounds) {
-        this.numberOfRounds = numberOfRounds;
+    public void setScore2(int score2) {
+        this.score2 = score2;
     }
-
-    public long getTimeOnTheRound() {
-        return timeOnTheRound;
-    }
-
-    public void setTimeOnTheRound(long timeOnTheRound) {
-        this.timeOnTheRound = timeOnTheRound;
-    }
-
 }

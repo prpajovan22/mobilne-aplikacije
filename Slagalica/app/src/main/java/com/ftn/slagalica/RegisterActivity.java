@@ -2,6 +2,7 @@ package com.ftn.slagalica;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,41 +14,85 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import models.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    TextInputEditText editTextEmail,editTextPassword;
+    TextInputEditText editTextEmail,editTextPassword,editTextUsername;
     Button buttonReg;
-    FirebaseApp auth;
+    FirebaseAuth auth;
+    FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        auth = FirebaseApp.getInstance();
-        editTextEmail.findViewById(R.id.email);
+        auth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.passowrd);
+        editTextUsername = findViewById(R.id.username);
         buttonReg = findViewById(R.id.buttonRegister);
 
         buttonReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email, password;
+                String email, password, username;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
+                username = String.valueOf(editTextUsername.getText());
 
-                if(TextUtils.isEmpty(email)){
-                    Toast.makeText(RegisterActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(email)) {
+                    editTextEmail.setError("Enter email");
                     return;
                 }
 
-                if(TextUtils.isEmpty(password)){
-                    Toast.makeText(RegisterActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(password)) {
+                    editTextPassword.setError("Enter password");
                     return;
                 }
 
-                /*auth.createUserWithEmailAndPassword(email, password)
+                if (TextUtils.isEmpty(username)) {
+                    editTextUsername.setError("Enter username");
+                    return;
+                }
+                auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
+                    boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                    if (!isNewUser){
+                        Toast.makeText(RegisterActivity.this, "email is in use", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(userCreatedTask -> {
+                       if(!userCreatedTask.isSuccessful()){
+                           Toast.makeText(RegisterActivity.this, "fail to register user", Toast.LENGTH_SHORT).show();
+                           return;
+                       }
+                        User user = new User();
+                       user.setUsername(username);
+                        firestore.collection("Users")
+                                .document(auth.getCurrentUser().getUid())
+                                .set(user)
+                                .addOnCompleteListener(userCreatedInFirestoreTask -> {
+                                    startActivity(new Intent(getApplicationContext(),Login.class));
+                                });
+                    });
+                });
+            }
+
+        });
+    }
+}
+
+
+        /*
+
+
+
+                auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResault>()) {
                     if (shouldUpRecreateTask().isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
@@ -64,8 +109,8 @@ public class RegisterActivity extends AppCompatActivity {
                                 ).show()
                         updateUI(null)
                     }
-                }*/
+                }
             }
-        });
-    }
-}
+        });*/
+
+

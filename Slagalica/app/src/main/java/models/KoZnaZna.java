@@ -4,52 +4,34 @@ import java.util.List;
 
 public class KoZnaZna extends Game{
 
-    public KoZnaZna(int score, int numberOfRounds, long timeOnTheRound) {
-        super(score, numberOfRounds, timeOnTheRound);
+
+    private List<String> wrongAnswer;
+
+    private String correctAnswer;
+
+    public KoZnaZna(int id, int score1, int score2) {
+        super(id, score1, score2);
     }
 
-    private int currentQuestion;
-    List<Question> questions;
-    private int selectedButton;
-
-    public int getCurrentQuestion() {
-        return currentQuestion;
+    public KoZnaZna(int id, int score1, int score2, List<String> wrongAnswer, String correctAnswer) {
+        super(id, score1, score2);
+        this.wrongAnswer = wrongAnswer;
+        this.correctAnswer = correctAnswer;
     }
 
-    public void setCurrentQuestion(int currentQuestion) {
-        this.currentQuestion = currentQuestion;
+    public List<String> getWrongAnswer() {
+        return wrongAnswer;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
+    public void setWrongAnswer(List<String> wrongAnswer) {
+        this.wrongAnswer = wrongAnswer;
     }
 
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public int getSelectedButton() {
-        return selectedButton;
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
     }
-
-    public void setSelectedButton(int selectedButton) {
-        this.selectedButton = selectedButton;
-    }
-
-    private void getCorrectAnswer(int selectedButton){
-
-        Question currentQuestionObject = this.questions.get(currentQuestion);
-
-        Solutions selectedSolution = currentQuestionObject.getSolution().get(selectedButton);
-
-        if(selectedSolution.isCorrect() == true){
-            int points = 10;
-            setScore(getScore() + 10);
-        }else{
-            int points = 5;
-            setScore(getScore() - 5);
-        }
-        currentQuestion++;
-    }
-
 }
