@@ -16,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
     /*private Button login;
     private Button start;
     private Button register;
-    private Button profil;*/
-
+    private Button profil;
+    private Button logout;
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         Button start = findViewById(R.id.start);
         Button login = findViewById(R.id.login);
         Button register = findViewById(R.id.register);
+        Button logout = findViewById(R.id.logout);
 
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutUser();
+                recreate();
+            }
+        });
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -69,11 +78,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
-    public void logoutUser(View view){
+    private void logoutUser(){
         mAuth.signOut();
     }
+
 
     @Override
     protected void onStart() {

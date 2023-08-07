@@ -15,26 +15,29 @@
         android:orientation="vertical"
         android:layout_marginTop="130dp">
 
+
         <ImageView
-            android:id="@android:id/icon"
+            android:id="@+id/profileImageView"
             android:layout_width="150dp"
-            android:layout_height="52dp"
-            android:layout_weight="1"
-            android:onClick="selectImage"
-            />
+            android:layout_height="150dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
 
         <TextView
             android:id="@+id/imeKorisnika"
             android:layout_width="150dp"
             android:layout_height="52dp"
-            android:text="Ime"
+            android:text="Username: "
             android:textAlignment="center"/>
 
         <TextView
             android:id="@+id/emailKorisnika"
             android:layout_width="150dp"
             android:layout_height="52dp"
-            android:text="Email"
+            android:text="Email: "
             android:textAlignment="center"/>
 
         <TextView
@@ -50,7 +53,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout"
-            android:onClick="logout"/>
+            android:onClick="Logout"/>
+
+        <Button
+            android:id="@+id/mainActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Home"
+            android:onClick="Home"/>
+
+        <Button
+            android:id="@+id/captureButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capture Profile Picture" />
+
+        <Button
+            android:id="@+id/selectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Profile Picture" />
 
     </LinearLayout>
 

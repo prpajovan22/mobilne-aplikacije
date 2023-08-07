@@ -7,15 +7,20 @@ public class User implements Serializable {
 
     private int id;
     private String username;
+
+    private String picturePath;
+
 /*
     private List<Game> numberOfGames;
 */
 
-    public User(int id, String username) {
+    public User(int id, String username, String picturePath) {
         this.id = id;
         this.username = username;
+        this.picturePath = picturePath;
     }
-    public User(){
+
+    public User() {
 
     }
 
@@ -33,5 +38,13 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
     }
 }
