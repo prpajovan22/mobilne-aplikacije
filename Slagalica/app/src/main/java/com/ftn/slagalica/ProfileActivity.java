@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import utils.Constants;
 
@@ -51,6 +52,8 @@ public class ProfileActivity extends AppCompatActivity {
         selectPicture = findViewById(R.id.selectButton);
 
         String profileImageUrl = "my_image_url";
+
+        Picasso.get().load(profileImageUrl).into(profileImageView);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
