@@ -10,4 +10,6 @@ public class Constants {
 
     public static String SHARED_PREFERENCES_USER_USERNAME = "User_username";
 
+    public static String QUESTIONS_COLLECTION = "Questions";
+
 }

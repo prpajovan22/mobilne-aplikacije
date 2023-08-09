@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
             profile.setVisibility(View.GONE);
             logout.setVisibility(View.GONE);
         }
-
-
     }
 
     protected void onDestroy(){
