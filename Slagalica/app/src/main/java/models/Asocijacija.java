@@ -3,7 +3,7 @@ package models;
 import java.sql.Time;
 import java.util.List;
 
-public class Asocijacija extends Game {
+public class Asocijacija {
 
     private String a1;
     private String a2;
@@ -25,12 +25,15 @@ public class Asocijacija extends Game {
     private String d3;
     private String d4;
 
-    public Asocijacija(int id, int score1, int score2, Time timer) {
-        super(id, score1, score2);
-    }
 
-    public Asocijacija(int id, int score1, int score2, Time timer, String a1, String a2, String a3, String a4, String b1, String b2, String b3, String b4, String c1, String c2, String c3, String c4, String d1, String d2, String d3, String d4) {
-        super(id, score1, score2);
+    private String solutionA;
+    private String solutionB;
+    private String solutionC;
+    private String solutionD;
+
+    private String finalAnswer;
+
+    public Asocijacija(String a1, String a2, String a3, String a4, String b1, String b2, String b3, String b4, String c1, String c2, String c3, String c4, String d1, String d2, String d3, String d4, String solutionA, String solutionB, String solutionC, String solutionD, String finalAnswer) {
         this.a1 = a1;
         this.a2 = a2;
         this.a3 = a3;
@@ -47,6 +50,15 @@ public class Asocijacija extends Game {
         this.d2 = d2;
         this.d3 = d3;
         this.d4 = d4;
+        this.solutionA = solutionA;
+        this.solutionB = solutionB;
+        this.solutionC = solutionC;
+        this.solutionD = solutionD;
+        this.finalAnswer = finalAnswer;
+    }
+
+    public Asocijacija(){
+
     }
 
     public String getA1() {
@@ -175,5 +187,45 @@ public class Asocijacija extends Game {
 
     public void setD4(String d4) {
         this.d4 = d4;
+    }
+
+    public String getSolutionA() {
+        return solutionA;
+    }
+
+    public void setSolutionA(String solutionA) {
+        this.solutionA = solutionA;
+    }
+
+    public String getSolutionB() {
+        return solutionB;
+    }
+
+    public void setSolutionB(String solutionB) {
+        this.solutionB = solutionB;
+    }
+
+    public String getSolutionC() {
+        return solutionC;
+    }
+
+    public void setSolutionC(String solutionC) {
+        this.solutionC = solutionC;
+    }
+
+    public String getSolutionD() {
+        return solutionD;
+    }
+
+    public void setSolutionD(String solutionD) {
+        this.solutionD = solutionD;
+    }
+
+    public String getFinalAnswer() {
+        return finalAnswer;
+    }
+
+    public void setFinalAnswer(String finalAnswer) {
+        this.finalAnswer = finalAnswer;
     }
 }

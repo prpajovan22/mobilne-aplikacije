@@ -10,6 +10,8 @@ import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import models.Asocijacija;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
 
                 startActivity(intent);
             }

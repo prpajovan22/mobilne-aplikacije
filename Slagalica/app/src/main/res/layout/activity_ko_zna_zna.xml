@@ -71,13 +71,6 @@
                 android:layout_marginTop="50dp"
                 android:text="Propusti"
                 />
-            <Button
-                android:id="@+id/odustani"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:text="Odustani"
-                />
         </LinearLayout>
 
 </LinearLayout>

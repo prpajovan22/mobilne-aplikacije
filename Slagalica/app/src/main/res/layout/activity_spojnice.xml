@@ -1,9 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SpojniceActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="411dp"
+        android:layout_height="407dp"
+        android:layout_marginLeft="15dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/A1"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A1" />
+
+            <Button
+                android:id="@+id/A2"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A2" />
+
+            <Button
+                android:id="@+id/A3"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A3" />
+
+            <Button
+                android:id="@+id/A4"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="A4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/B1"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B1" />
+
+            <Button
+                android:id="@+id/B2"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B2" />
+
+            <Button
+                android:id="@+id/B3"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B3" />
+
+            <Button
+                android:id="@+id/B4"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B4" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

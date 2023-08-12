@@ -12,4 +12,6 @@ public class Constants {
 
     public static String QUESTIONS_COLLECTION = "Questions";
 
+    public static String ASOCIATION_COLLECTION = "Asociations";
+
 }
