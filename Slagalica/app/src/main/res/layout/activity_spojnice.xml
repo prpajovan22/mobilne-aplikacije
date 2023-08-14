@@ -33,28 +33,6 @@
                 android:text="A2" />
 
             <Button
-                android:id="@+id/A3"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="A3" />
-
-            <Button
-                android:id="@+id/A4"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="A4" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:orientation="vertical">
-
-            <Button
                 android:id="@+id/B1"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
@@ -68,15 +46,37 @@
                 android:layout_margin="1dp"
                 android:text="B2" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:orientation="vertical">
+
             <Button
-                android:id="@+id/B3"
+                android:id="@+id/D1"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B1" />
+
+            <Button
+                android:id="@+id/D2"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B2" />
+
+            <Button
+                android:id="@+id/C1"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:text="B3" />
 
             <Button
-                android:id="@+id/B4"
+                android:id="@+id/C2"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"

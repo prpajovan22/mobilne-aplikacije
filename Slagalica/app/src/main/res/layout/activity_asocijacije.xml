@@ -132,41 +132,43 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/c1Asocijacija"
-                android:layout_width="160dp"
+            <EditText
+                android:id="@+id/cKolonaAsocijacija"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="C1"/>
-
-            <Button
-                android:id="@+id/c2Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="C2"/>
-            <Button
-                android:id="@+id/c3Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="C3" />
+                android:ems="8"
+                android:hint="C"
+                android:inputType="text"
+                android:textAlignment="center" />
 
             <Button
                 android:id="@+id/c4Asocijacija"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
-                android:text="C4" />
+                android:text="C4"/>
 
-            <EditText
-                android:id="@+id/cKolonaAsocijacija"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/c3Asocijacija"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:ems="8"
-                android:hint="A"
-                android:inputType="text"
-                android:textAlignment="center" />
+                android:layout_margin="1dp"
+                android:text="C3"/>
+            <Button
+                android:id="@+id/c2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C2" />
+
+            <Button
+                android:id="@+id/c1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C1" />
+
+
 
         </LinearLayout>
 
@@ -176,34 +178,6 @@
             android:orientation="vertical"
             android:layout_marginRight="30dp">
 
-            <Button
-                android:id="@+id/d1Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="D1"/>
-
-            <Button
-                android:id="@+id/d2Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="D2"/>
-
-            <Button
-                android:id="@+id/d3Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="D3" />
-
-            <Button
-                android:id="@+id/d4Asocijacija"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:text="D4" />
-
             <EditText
                 android:id="@+id/dKolonaAsocijacija"
                 android:layout_width="wrap_content"
@@ -212,6 +186,35 @@
                 android:hint="D"
                 android:inputType="text"
                 android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/d4Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D4"/>
+
+            <Button
+                android:id="@+id/d3Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D3"/>
+
+            <Button
+                android:id="@+id/d2Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D2" />
+
+            <Button
+                android:id="@+id/d1Asocijacija"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="D1" />
+
         </LinearLayout>
 
     </LinearLayout>

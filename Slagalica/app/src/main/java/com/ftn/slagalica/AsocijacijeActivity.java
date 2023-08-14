@@ -1,10 +1,12 @@
 package com.ftn.slagalica;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,10 +16,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,17 +40,18 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private List<Asocijacija> asocijacije;
     private FirebaseFirestore firestore;
-    private DatabaseReference
 
     private EditText finalAnswerA,finalAnswerB,finalAnswerC,finalAnswerD;
 
-    private Button a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4;
+    private Button a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4, propusti;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asocijacije);
+
+        propusti = findViewById(R.id.zavrsi);
 
         firestore = FirebaseFirestore.getInstance();
 
@@ -83,6 +89,14 @@ public class AsocijacijeActivity extends AppCompatActivity {
             }
         });
 
+        propusti.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AsocijacijeActivity.this, SpojniceActivity.class);
+                startActivity(intent);
+            }
+        });
+
         a1.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             a1.setText(asocijacija.getA1());
@@ -112,82 +126,124 @@ public class AsocijacijeActivity extends AppCompatActivity {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             b1.setText(asocijacija.getB1());
             b1.setEnabled(false);
+            resetTimer();
         });
 
         b2.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             b2.setText(asocijacija.getB2());
             b2.setEnabled(false);
+            resetTimer();
         });
         b3.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             b3.setText(asocijacija.getB3());
             b3.setEnabled(false);
+            resetTimer();
         });
         b4.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             b4.setText(asocijacija.getB4());
             b4.setEnabled(false);
+            resetTimer();
         });
 
         c1.setOnClickListener(c -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             c1.setText(asocijacija.getC1());
             c1.setEnabled(false);
+            resetTimer();
         });
 
         c2.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             c2.setText(asocijacija.getC2());
             c2.setEnabled(false);
+            resetTimer();
         });
         c3.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             c3.setText(asocijacija.getC3());
             c3.setEnabled(false);
+            resetTimer();
         });
         c4.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             c4.setText(asocijacija.getC4());
             c4.setEnabled(false);
+            resetTimer();
         });
 
         d1.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             d1.setText(asocijacija.getD1());
             d1.setEnabled(false);
+            resetTimer();
         });
 
         d2.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             d2.setText(asocijacija.getD2());
             d2.setEnabled(false);
+            resetTimer();
         });
         d3.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             d3.setText(asocijacija.getD3());
             d3.setEnabled(false);
+            resetTimer();
         });
         d4.setOnClickListener(a -> {
             Asocijacija asocijacija = asocijacije.get(currentRound);
             d4.setText(asocijacija.getD4());
             d4.setEnabled(false);
+            resetTimer();
         });
 
-        finalAnswerA.setOnKeyListener(new View.OnKeyListener() {
+        startCountdown();
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////Ovo je za proveru texta//////////////////////////////////
+
+        finalAnswerA.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if(keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
-                    Log.e("Ovde je greska","Ovde je stalo");
-                    return true;
-                    //a3.setText(asocijacija.getSolutionA());
-                    //a3.setEnabled(false);
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    checkEnteredWord(finalAnswerA.getText().toString().trim());
+                    return  true;
                 }
                 return false;
             }
         });
-        startCountdown();
     }
+
+    private void checkEnteredWord(String enterWord){
+        if (TextUtils.isEmpty(enterWord)){
+            return;
+        }
+
+        firestore.collection(Constants.ASOCIATION_COLLECTION).document(enterWord).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            if(documentSnapshot.exists()){
+                                finalAnswerA.setEnabled(false);
+                            }else{
+                                finalAnswerA.setEnabled(true);
+                            }
+                        }
+                    }
+                });
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
+
 
     private void startCountdown() {
         countDownTimer = new CountDownTimer(15000, 1000) {

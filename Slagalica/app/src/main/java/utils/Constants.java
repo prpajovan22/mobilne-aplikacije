@@ -14,4 +14,6 @@ public class Constants {
 
     public static String ASOCIATION_COLLECTION = "Asociations";
 
+    public static String SPOJNICE_COLLECTION = "Spojnice";
+
 }
