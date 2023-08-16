@@ -60,6 +60,7 @@
                 android:id="@+id/aKolonaAsocijacija"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
                 android:ems="8"
                 android:hint="A"
                 android:inputType="text"
@@ -107,17 +108,20 @@
                 android:layout_height="wrap_content"
                 android:ems="8"
                 android:hint="B"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:textAlignment="center" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/resenje"
         android:layout_width="335dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:imeOptions="actionDone"
+        android:inputType="text"
         android:hint="Resenje"/>
 
     <LinearLayout
@@ -138,6 +142,7 @@
                 android:layout_height="wrap_content"
                 android:ems="8"
                 android:hint="C"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:textAlignment="center" />
 
@@ -184,6 +189,7 @@
                 android:layout_height="wrap_content"
                 android:ems="8"
                 android:hint="D"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:textAlignment="center" />
 

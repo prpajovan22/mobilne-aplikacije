@@ -56,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*FirebaseUser currentUser = mAuth.getCurrentUser();
+                if(currentUser.getEmail() != null){
+
+                }*/
                 Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
 
                 startActivity(intent);

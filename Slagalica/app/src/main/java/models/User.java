@@ -10,6 +10,7 @@ public class User implements Serializable {
 
     private String picturePath;
 
+    private Integer token;
 /*
     private List<Game> numberOfGames;
 */
