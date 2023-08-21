@@ -1,5 +1,7 @@
 package models;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,14 +17,23 @@ public class User implements Serializable {
     private List<Game> numberOfGames;
 */
 
-    public User(int id, String username, String picturePath) {
+    public User(int id, String username, String picturePath, Integer token) {
         this.id = id;
         this.username = username;
         this.picturePath = picturePath;
+        this.token = token;
     }
 
     public User() {
 
+    }
+
+    public Integer getToken() {
+        return token;
+    }
+
+    public void setToken(Integer token) {
+        this.token = token;
     }
 
     public int getId() {

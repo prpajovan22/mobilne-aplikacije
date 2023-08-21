@@ -58,6 +58,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:text="B2" />
+            <Button
+                android:id="@+id/B3"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="B3" />
 
         </LinearLayout>
 
@@ -94,6 +100,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:text="B4" />
+
+            <Button
+                android:id="@+id/C3"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="C3" />
         </LinearLayout>
 
     </LinearLayout>

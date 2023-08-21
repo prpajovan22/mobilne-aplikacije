@@ -16,4 +16,8 @@ public class Constants {
 
     public static String SPOJNICE_COLLECTION = "Spojnice";
 
+    public static String GAME_COLLECTION = "Game";
+
+    public static String SHARED_PREFERENCES_GAME_ID = "GameID";
+
 }

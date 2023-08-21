@@ -73,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
                        }
                         User user = new User();
                        user.setUsername(username);
+                       user.setToken(5);
                         firestore.collection("Users")
                                 .document(auth.getCurrentUser().getUid())
                                 .set(user)
