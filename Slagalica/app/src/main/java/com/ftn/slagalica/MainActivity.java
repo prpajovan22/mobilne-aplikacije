@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.getValue(String.class).equals("Initial")){
+                        return;
+                    }
                     SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(Constants.SHARED_PREFERENCES_GAME_ID,snapshot.getValue(String.class));
@@ -91,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 recreate();
             }
         });
-
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,16 +127,16 @@ public class MainActivity extends AppCompatActivity {
                                                                     UserFirebaseModel model = s.getValue(UserFirebaseModel.class);
                                                                     String userId = s.getKey();
                                                                     if(!userId.equals(mAuth.getCurrentUser().getUid())){
-                                                                        String gameId = UUID.randomUUID().toString();
+                                                                        /*String gameId = UUID.randomUUID().toString();
                                                                         realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").setValue(gameId);
-                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1","test2","test3"));
-                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addValueEventListener(new ValueEventListener() {
+                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1","test2","test3",0,0));
+                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addValueEventListener(new ValueEventListener() {*/
+                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                             @Override
                                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
                                                                                 Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
                                                                                 startActivity(intent);
+                                                                                realTimeDatabase.removeEventListener(this);
                                                                             }
 
                                                                             @Override
@@ -142,6 +144,17 @@ public class MainActivity extends AppCompatActivity {
 
                                                                             }
                                                                         });
+                                                                        String gameId = UUID.randomUUID().toString();
+                                                                        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                                                                        SharedPreferences.Editor editor = preferences.edit();
+                                                                        editor.putString(Constants.SHARED_PREFERENCES_GAME_ID, gameId);
+                                                                        editor.apply();
+
+                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").setValue(gameId);
+                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1","test2","test3",0,0));
+
+                                                                        realTimeDatabase.removeEventListener(this);
+                                                                        break;
                                                                     }
                                                                 }
                                                             }

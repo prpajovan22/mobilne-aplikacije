@@ -347,9 +347,8 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                // Timer finished, switch to another activity
-                Intent intent = new Intent(AsocijacijeActivity.this, MainActivity.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(AsocijacijeActivity.this, MainActivity.class);
+                startActivity(intent);*/
                 finish();
             }
         }.start();
