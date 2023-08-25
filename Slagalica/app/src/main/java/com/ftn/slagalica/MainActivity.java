@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-
                 startActivity(intent);
             }
         });
@@ -127,14 +126,14 @@ public class MainActivity extends AppCompatActivity {
                                                                     UserFirebaseModel model = s.getValue(UserFirebaseModel.class);
                                                                     String userId = s.getKey();
                                                                     if(!userId.equals(mAuth.getCurrentUser().getUid())){
-                                                                        /*String gameId = UUID.randomUUID().toString();
-                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").setValue(gameId);
-                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1","test2","test3",0,0));
-                                                                        realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addValueEventListener(new ValueEventListener() {*/
                                                                         realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                             @Override
                                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                                 Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                                                                                SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                                                                                SharedPreferences.Editor editor = preferences.edit();
+                                                                                editor.putString(Constants.OPONENT_ID, userId);
+                                                                                editor.apply();
                                                                                 startActivity(intent);
                                                                                 realTimeDatabase.removeEventListener(this);
                                                                             }

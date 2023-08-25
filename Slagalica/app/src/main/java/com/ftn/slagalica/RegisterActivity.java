@@ -89,29 +89,3 @@ public class RegisterActivity extends AppCompatActivity {
 }
 
 
-        /*
-
-
-
-                auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResault>()) {
-                    if (shouldUpRecreateTask().isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(Tag, "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        updateUI(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(
-                                baseContext,
-                                "Authentication failed.",
-                                Toast.LENGTH_SHORT,
-                                ).show()
-                        updateUI(null)
-                    }
-                }
-            }
-        });*/
-
-

@@ -11,6 +11,8 @@ public class KoZnaZnaAnswerModel {
         this.timeStamp = timeStamp;
     }
 
+    public KoZnaZnaAnswerModel(){}
+
     public boolean isCorrectAnswer() {
         return isCorrectAnswer;
     }

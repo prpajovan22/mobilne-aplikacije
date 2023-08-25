@@ -22,4 +22,5 @@ public class Constants {
 
     public static String SHARED_PREFERENCES_KOZNAZNA_ID = "koZnaZna";
 
+    public static String OPONENT_ID = "OponentId";
 }

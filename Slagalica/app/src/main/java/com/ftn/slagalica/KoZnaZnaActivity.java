@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +58,13 @@ public class KoZnaZnaActivity extends AppCompatActivity {
 
     private DatabaseReference realTimeDatabase;
 
+    private FirebaseAuth mAuth;
+
+
+    private String player1UserId ;
+    private String player2UserId,gameId ;
+
+    private List<KoZnaZnaAnswerModel> answers = new ArrayList<>();
 
 
 
@@ -66,8 +74,15 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ko_zna_zna);
         realTimeDatabase = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        player1UserId = mAuth.getCurrentUser().getUid();
+
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        player2UserId = preferences.getString(Constants.OPONENT_ID,"");
+
+        gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID,"");
 
         button1 = findViewById(R.id.propustiKoZnaZna);
         answer1 = findViewById(R.id.answer1);
@@ -115,6 +130,43 @@ public class KoZnaZnaActivity extends AppCompatActivity {
                answer3.setText(pitanje.getOdgovor3());
                answer4.setText(pitanje.getOdgovor4());
            }
+           realTimeDatabase.child(Constants.GAME_COLLECTION)
+                    .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
+                    .child(String.valueOf(repetitionCount)).addValueEventListener(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            answers.add(snapshot.getValue(KoZnaZnaAnswerModel.class));
+                            if(answers.size() == 2){
+                                Long player1Timestamp;
+                                Long player2Timestamp;
+                                if(snapshot.getKey().equals(mAuth.getCurrentUser().getUid())){
+                                    player1Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                                    player2Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+
+                                }else{
+                                    player1Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                                    player2Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                                }
+
+                                if (player1Timestamp < player2Timestamp) {
+                                    assignPoints(gameId, player1UserId, 10);
+                                    assignPoints(gameId, player2UserId, 5);
+                                } else if (player1Timestamp > player2Timestamp) {
+                                    assignPoints(gameId, player2UserId, 10);
+                                    assignPoints(gameId, player1UserId, 5);
+                                } else{
+                                    assignPoints(gameId, player2UserId, 5);
+                                    assignPoints(gameId, player1UserId, 5);
+                                }
+                                realTimeDatabase.removeEventListener(this);
+                            }
+                       }
+
+                       @Override
+                       public void onCancelled(@NonNull DatabaseError error) {
+
+                       }
+                   });
         });
 
     }
@@ -205,18 +257,39 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
                 .child(String.valueOf(repetitionCount)).child(userId).setValue(new KoZnaZnaAnswerModel(isCorrectAnswer, String.valueOf(Instant.now().toEpochMilli())));
 
-        // preuzeti timeStamp iz oba igraca i uporeditit ih, dodati 5 brzem
         realTimeDatabase.child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID).child(koId);
 
         answer1.setEnabled(false);
         answer2.setEnabled(false);
         answer3.setEnabled(false);
         answer4.setEnabled(false);
+
+    }
+
+    private void assignPoints(String gameId, String playerId, int points) {
+        DatabaseReference userRef = realTimeDatabase.child(Constants.USER_COLLECTION).child(playerId);
+        DatabaseReference pointsRef = userRef.child("bodovi1");
+
+        pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Integer currentPoints = dataSnapshot.getValue(Integer.class);
+                if (currentPoints != null) {
+                    int newPoints = currentPoints + points;
+                    pointsRef.setValue(newPoints);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 
 
-
-    /*private void checkAnswer(String selectedAnswer) {
+    /*
+    private void checkAnswer(String selectedAnswer) {
         boolean isCorrectAnswer = false;
 
         String correctAnswer = visePitanja.get(repetitionCount).getCorrectAnswer();
