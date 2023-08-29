@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "138851566785",
-    "project_id": "slagalica-42b24",
-    "storage_bucket": "slagalica-42b24.appspot.com"
+    "project_number": "732250779203",
+    "firebase_url": "https://slagalica2-60f8f-default-rtdb.firebaseio.com",
+    "project_id": "slagalica2-60f8f",
+    "storage_bucket": "slagalica2-60f8f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:138851566785:android:202442ea150344a5b40040",
+        "mobilesdk_app_id": "1:732250779203:android:632fb24310ae30832deef6",
         "android_client_info": {
           "package_name": "com.ftn.slagalica"
         }
       },
       "oauth_client": [
         {
-          "client_id": "138851566785-eb0a22lat51reav3c943dhsjgg1ia3d8.apps.googleusercontent.com",
+          "client_id": "732250779203-gthb9crp2j5fnalc30ek23paoi3ik8u5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCXgU1W88WbQcZjVZISyfN7J7xTO9_rCrQ"
+          "current_key": "AIzaSyDjavrzM6ljfnqermQswp_FdMhckFFe0L0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "138851566785-eb0a22lat51reav3c943dhsjgg1ia3d8.apps.googleusercontent.com",
+              "client_id": "732250779203-gthb9crp2j5fnalc30ek23paoi3ik8u5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

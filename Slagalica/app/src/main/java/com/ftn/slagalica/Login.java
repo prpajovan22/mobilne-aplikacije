@@ -67,8 +67,6 @@ public class Login extends AppCompatActivity {
                                                 editor.putString(Constants.SHARED_PREFERENCES_USER_USERNAME,user.getUsername());
                                                 editor.apply();
 
-                                                Toast.makeText(Login.this, "login succesfull", Toast.LENGTH_SHORT).show();
-                                                startActivity(new Intent(Login.this, MainActivity.class));
                                                 finish();
                                             });
                                 } else {
