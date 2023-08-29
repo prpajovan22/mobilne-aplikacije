@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(Constants.SHARED_PREFERENCES_GAME_ID,snapshot.getValue(String.class));
                     editor.apply();
-                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                    Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
                     startActivity(intent);
                 }
 

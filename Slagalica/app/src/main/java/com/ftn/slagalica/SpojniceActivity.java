@@ -1,8 +1,11 @@
 package com.ftn.slagalica;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,14 +14,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import firebase_models.GameFirebaseModel;
 import models.Pitanje;
 import models.Spojnice;
 import utils.Constants;
@@ -30,8 +43,11 @@ public class SpojniceActivity extends AppCompatActivity {
     private Runnable countdownRunnable;
     private int countdownTime = 30;
     private int currentRound = 0;
-    //private TextView countdownText1;
+    private TextView countdownText1;
     private String selectedButton;
+
+    private FirebaseAuth mAuth;
+    private String player1UserId,player2UserId;
     private Button leftSide1, leftSide2, leftSide3, leftSide4,leftSide5, rightSide1, rightSide2, rightSide3, rightSide4
             ,rightSide5;
 
@@ -58,7 +74,15 @@ public class SpojniceActivity extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
 
+        player1UserId = mAuth.getCurrentUser().getUid();
+
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        player2UserId = preferences.getString(Constants.OPONENT_ID,"");
+
+        String gameId = Constants.SHARED_PREFERENCES_GAME_ID;
+
         //startCountdown();
+
 
         firestore.collection(Constants.SPOJNICE_COLLECTION).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -172,8 +196,71 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         });
     }
-
     private void checkAndHandleMatch(Button rightButton) {
+        String selectedText = selectedButton;
+        Spojnice trenutnaSpojnica = spojnice.get(currentRound);
+
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        int currentPlayerPoints = preferences.getInt(Constants.SHARED_PREFERENCES_GAME_ID, 0);
+
+        if (rightButton.getText().toString().equals(trenutnaSpojnica.getAnswers().get(selectedText))) {
+            rightButton.setBackgroundColor(Color.GREEN);
+            selectedButton = null;
+            rightButton.setEnabled(false);
+            currentPlayerPoints += 10;
+        } else {
+            selectedButton = null;
+            currentPlayerPoints -= 10;
+        }
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(Constants.SHARED_PREFERENCES_GAME_ID, currentPlayerPoints);
+        editor.apply();
+
+        String gameId = Constants.SHARED_PREFERENCES_GAME_ID;
+        DatabaseReference gameRef = FirebaseDatabase.getInstance().getReference("games").child(gameId);
+        int finalCurrentPlayerPoints = currentPlayerPoints;
+        gameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    GameFirebaseModel game = snapshot.getValue(GameFirebaseModel.class);
+
+                    if (game != null) {
+                        if (player2UserId.equals(mAuth.getCurrentUser().getUid())) {
+                            game.setBodovi2(finalCurrentPlayerPoints);
+                        } else {
+                            game.setBodovi1(finalCurrentPlayerPoints);
+                        }
+
+                        DatabaseReference gameUpdateRef = FirebaseDatabase.getInstance().getReference("games").child(gameId);
+                        Map<String, Object> updateValues = new HashMap<>();
+                        updateValues.put("bodovi1", game.getBodovi1());
+                        updateValues.put("bodovi2", game.getBodovi2());
+
+                        gameUpdateRef.updateChildren(updateValues)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                    }
+                                });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+    }
+
+    /*private void checkAndHandleMatch(Button rightButton) {
         String selectedText = selectedButton;
         Spojnice trenutnaSpojnica = spojnice.get(currentRound);
 
@@ -188,7 +275,7 @@ public class SpojniceActivity extends AppCompatActivity {
             selectedButton = null;
             //String leftButtonId = selectedText;
         }
-    }
+    }*/
 
     /*private void startCountdown() {
         countdownRunnable = new Runnable() {

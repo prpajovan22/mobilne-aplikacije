@@ -36,6 +36,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private TextView countdownText;
     private Integer currentRound = 0;
+
     private Integer currentPhaze = 0;
     private CountDownTimer countDownTimer;
 
@@ -45,6 +46,8 @@ public class AsocijacijeActivity extends AppCompatActivity {
     private EditText finalAnswerA, finalAnswerB, finalAnswerC, finalAnswerD, finalSolution;
 
     private Button a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2, d3, d4, propusti;
+
+    private boolean switchedToAnotherActivity = false;
 
 
     @Override
@@ -360,5 +363,40 @@ public class AsocijacijeActivity extends AppCompatActivity {
             startCountdown();
         }
     }
+
+
+
+
+
+
+    /*
+    private void startCountdown() {
+        countDownTimer = new CountDownTimer(2 * 60 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            @Override
+            public void onFinish() {
+                if (!switchedToAnotherActivity) {
+                    Intent intent = new Intent(AsocijacijeActivity.this, SpojniceActivity.class);
+                    startActivity(intent);
+                    switchedToAnotherActivity = true;
+                } else {
+                    resetTimer();
+                    switchedToAnotherActivity = false;
+                }
+            }
+        }.start();
+    }
+
+    private void resetTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            startCountdown();
+        }
+    }
+    */
 
 }

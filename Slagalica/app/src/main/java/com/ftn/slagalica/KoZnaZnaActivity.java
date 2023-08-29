@@ -1,6 +1,7 @@
 package com.ftn.slagalica;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,8 +61,6 @@ public class KoZnaZnaActivity extends AppCompatActivity {
     private DatabaseReference realTimeDatabase;
 
     private FirebaseAuth mAuth;
-
-
     private String player1UserId ;
     private String player2UserId,gameId ;
 
@@ -132,34 +132,55 @@ public class KoZnaZnaActivity extends AppCompatActivity {
            }
            realTimeDatabase.child(Constants.GAME_COLLECTION)
                     .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                    .child(String.valueOf(repetitionCount)).addValueEventListener(new ValueEventListener() {
+                    .child(String.valueOf(repetitionCount)).addChildEventListener(new ChildEventListener() {
+
                        @Override
-                       public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            answers.add(snapshot.getValue(KoZnaZnaAnswerModel.class));
-                            if(answers.size() == 2){
-                                Long player1Timestamp;
-                                Long player2Timestamp;
-                                if(snapshot.getKey().equals(mAuth.getCurrentUser().getUid())){
-                                    player1Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
-                                    player2Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                       public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                           KoZnaZnaAnswerModel model = snapshot.getValue(KoZnaZnaAnswerModel.class);
+                           if(model == null){
+                               return;
+                           }
+                           answers.add(model);
+                           if(answers.size() == 2){
+                               Long player1Timestamp;
+                               Long player2Timestamp;
+                               if(snapshot.getKey().equals(mAuth.getCurrentUser().getUid())){
+                                   player1Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                                   player2Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
 
-                                }else{
-                                    player1Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
-                                    player2Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
-                                }
+                               }else{
+                                   player1Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                                   player2Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                               }
 
-                                if (player1Timestamp < player2Timestamp) {
-                                    assignPoints(gameId, player1UserId, 10);
-                                    assignPoints(gameId, player2UserId, 5);
-                                } else if (player1Timestamp > player2Timestamp) {
-                                    assignPoints(gameId, player2UserId, 10);
-                                    assignPoints(gameId, player1UserId, 5);
-                                } else{
-                                    assignPoints(gameId, player2UserId, 5);
-                                    assignPoints(gameId, player1UserId, 5);
-                                }
-                                realTimeDatabase.removeEventListener(this);
-                            }
+                               if (player1Timestamp < player2Timestamp) {
+                                   assignPoints(gameId, player1UserId, 10);
+                                   assignPoints(gameId, player2UserId, 5);
+                               } else if (player1Timestamp > player2Timestamp) {
+                                   assignPoints(gameId, player2UserId, 10);
+                                   assignPoints(gameId, player1UserId, 5);
+                               } else{
+                                   assignPoints(gameId, player2UserId, 5);
+                                   assignPoints(gameId, player1UserId, 5);
+                               }
+                               realTimeDatabase.removeEventListener(this);
+                           }
+
+                       }
+
+                       @Override
+                       public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                       }
+
+                       @Override
+                       public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                       }
+
+                       @Override
+                       public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                        }
 
                        @Override
@@ -232,7 +253,6 @@ public class KoZnaZnaActivity extends AppCompatActivity {
 
 //
 //
-//
     private void checkAnswer(String selectedAnswer){
 
         boolean isCorrectAnswer = false;
@@ -247,6 +267,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
             highlightCorrectAndIncorrectAnswers(correctAnswer);
             Button selectedButton = getButtonForAnswerText(selectedAnswer);
             selectedButton.setBackgroundColor(Color.RED);
+            assignPoints(gameId,player1UserId,-5);
         }
 
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -267,130 +288,9 @@ public class KoZnaZnaActivity extends AppCompatActivity {
     }
 
     private void assignPoints(String gameId, String playerId, int points) {
-        DatabaseReference userRef = realTimeDatabase.child(Constants.USER_COLLECTION).child(playerId);
-        DatabaseReference pointsRef = userRef.child("bodovi1");
-
-        pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Integer currentPoints = dataSnapshot.getValue(Integer.class);
-                if (currentPoints != null) {
-                    int newPoints = currentPoints + points;
-                    pointsRef.setValue(newPoints);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors
-            }
-        });
-    }
-
-
-    /*
-    private void checkAnswer(String selectedAnswer) {
-        boolean isCorrectAnswer = false;
-
-        String correctAnswer = visePitanja.get(repetitionCount).getCorrectAnswer();
-
-        if (selectedAnswer.equals(correctAnswer)) {
-            Button selectedButton = getButtonForAnswerText(selectedAnswer);
-            selectedButton.setBackgroundColor(Color.GREEN);
-            isCorrectAnswer = true;
-        } else {
-            highlightCorrectAndIncorrectAnswers(correctAnswer);
-            Button selectedButton = getButtonForAnswerText(selectedAnswer);
-            selectedButton.setBackgroundColor(Color.RED);
-        }
-
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        String userId = preferences.getString(Constants.SHARED_PREFERENCES_USER_ID, "");
-        String gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
-        String koId = preferences.getString(Constants.SHARED_PREFERENCES_KOZNAZNA_ID, "");
-
-        long timestamp = Instant.now().toEpochMilli();
-
-        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                .child(String.valueOf(repetitionCount)).child(userId).setValue(new KoZnaZnaAnswerModel(isCorrectAnswer, String.valueOf(timestamp)));
-
-        answer1.setEnabled(false);
-        answer2.setEnabled(false);
-        answer3.setEnabled(false);
-        answer4.setEnabled(false);
-
-        if (bothPlayersAnswered(gameId, koId)) {
-            long player1Timestamp = getTimestampForPlayer(gameId, koId, player1UserId);
-            long player2Timestamp = getTimestampForPlayer(gameId, koId, player2UserId);
-
-            if (player1Timestamp < player2Timestamp) {
-                assignPoints(gameId, player1UserId, 5);
-                assignPoints(gameId, player2UserId, 3);
-            } else if (player1Timestamp > player2Timestamp) {
-                assignPoints(gameId, player2UserId, 5);
-                assignPoints(gameId, player1UserId, 3);
-            }
-        }
-    }
-
-
-    private boolean bothPlayersAnswered(String gameId, String koId) {
-        DatabaseReference player1Ref = realTimeDatabase.child(Constants.GAME_COLLECTION)
-                .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                .child(String.valueOf(repetitionCount)).child(player1UserId);
-
-        DatabaseReference player2Ref = realTimeDatabase.child(Constants.GAME_COLLECTION)
-                .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                .child(String.valueOf(repetitionCount)).child(player2UserId);
-
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean player1Answered = dataSnapshot.child(player1UserId).exists();
-                boolean player2Answered = dataSnapshot.child(player2UserId).exists();
-
-                if (player1Answered && player2Answered) {
-            long player1Timestamp = dataSnapshot.child(player1UserId)
-                    .child("timeStamp").getValue(Long.class);
-            long player2Timestamp = dataSnapshot.child(player2UserId)
-                    .child("timeStamp").getValue(Long.class);
-
-            if (player1Timestamp < player2Timestamp) {
-                assignPoints(gameId, player1UserId, 5);
-                assignPoints(gameId, player2UserId, 3);
-            } else if (player1Timestamp > player2Timestamp) {
-                assignPoints(gameId, player2UserId, 5);
-                assignPoints(gameId, player1UserId, 3);
-            } else {
-                assignPoints(gameId, player1UserId, 3);
-                assignPoints(gameId, player2UserId, 3);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors
-            }
-        };
-
-        DatabaseReference answersRef = realTimeDatabase.child(Constants.GAME_COLLECTION)
-                .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                .child(String.valueOf(repetitionCount));
-
-        answersRef.addListenerForSingleValueEvent(listener);
-
-        return false;
-    }
-
-    private long getTimestampForPlayer(String gameId, String koId, String playerId) {
-        DatabaseReference timestampRef = realTimeDatabase.child(Constants.GAME_COLLECTION)
-                .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
-                .child(String.valueOf(repetitionCount)).child(playerId).child("timeStamp");
-
-        return timestampRef.getValue(Long.class);
-    }
-
-    private void assignPoints(String gameId, String playerId, int points) {
-        DatabaseReference userRef = realTimeDatabase.child(Constants.USER_COLLECTION).child(playerId);
+        String gameID = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID,"");
+        DatabaseReference userRef = realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameID);
         DatabaseReference pointsRef = userRef.child("bodovi1");
 
         pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -409,7 +309,6 @@ public class KoZnaZnaActivity extends AppCompatActivity {
             }
         });
     }
-*/
     private Button getButtonForAnswerText(String answerText) {
         if (answer1.getText().toString().equals(answerText)) {
             return answer1;
