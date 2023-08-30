@@ -277,7 +277,6 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 countdownText1.setText(String.valueOf(millisUntilFinished / 1000));
             }
-
             @Override
             public void onFinish() {
                 if (!switchedToAnotherActivity) {
@@ -286,6 +285,7 @@ public class SpojniceActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 resetTimer();
+                                isMyTurn = !isMyTurn;
                                 fetchDataAndUpdateUI();
                             }
                         }, 5000);
@@ -325,7 +325,6 @@ public class SpojniceActivity extends AppCompatActivity {
     }
 
     private void fetchDataAndUpdateUI() {
-        isMyTurn = !isMyTurn;
 
         currentRound = 1;
         Spojnice spojnica = spojnice.get(1);
@@ -352,7 +351,42 @@ public class SpojniceActivity extends AppCompatActivity {
         rightSide5.setText(spojnica.getRightColumn().get(4));
         rightSide5.setEnabled(true);
 
+        if (isMyTurn) {
+            enableInteractivity();
+        } else {
+            disableInteractivity();
+        }
+
         startCountdown();
 
+    }
+
+    private void enableInteractivity() {
+        leftSide1.setEnabled(true);
+        leftSide2.setEnabled(true);
+        leftSide3.setEnabled(true);
+        leftSide4.setEnabled(true);
+        leftSide5.setEnabled(true);
+
+        rightSide1.setEnabled(true);
+        rightSide2.setEnabled(true);
+        rightSide3.setEnabled(true);
+        rightSide4.setEnabled(true);
+        rightSide5.setEnabled(true);
+    }
+
+    private void disableInteractivity() {
+        leftSide1.setEnabled(false);
+        leftSide2.setEnabled(false);
+        leftSide3.setEnabled(false);
+        leftSide4.setEnabled(false);
+        leftSide5.setEnabled(false);
+
+
+        rightSide1.setEnabled(false);
+        rightSide2.setEnabled(false);
+        rightSide3.setEnabled(false);
+        rightSide4.setEnabled(false);
+        rightSide5.setEnabled(false);
     }
 }

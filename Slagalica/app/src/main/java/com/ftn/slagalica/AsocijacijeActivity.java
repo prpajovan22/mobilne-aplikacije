@@ -70,8 +70,25 @@ public class AsocijacijeActivity extends AppCompatActivity {
     private String player1UserId,player2UserId,gameId;
     private boolean isMyTurn = false;
 
+    private boolean openFieldInCurrentTurn = false;
+
     private DatabaseReference realTimeDatabase;
 
+    private List<String> listAreOpenA = new ArrayList<>();
+
+    private List<String> listAreOpenB = new ArrayList<>();
+
+    private List<String> listAreOpenC = new ArrayList<>();
+
+    private List<String> listAreOpenD = new ArrayList<>();
+
+    private boolean isColumnAAnswerd = false;
+
+    private boolean isColumnBAnswerd = false;
+
+    private boolean isColumnCAnswerd = false;
+
+    private boolean isColumnDAnswerd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,25 +139,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
         isMyTurn = preferences.getBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
         gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
 
-        if (!isMyTurn) {
-            View overlayView = new View(this);
-            overlayView.setBackgroundColor(Color.TRANSPARENT);
-            overlayView.setClickable(true);
-            overlayView.setFocusable(true);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-            FrameLayout rootView = findViewById(android.R.id.content);
-            rootView.addView(overlayView, params);
-        }
-        if (isMyTurn) {
-            FrameLayout rootView = findViewById(android.R.id.content);
-            View overlayView = rootView.findViewWithTag("overlayViewTag");
-            if (overlayView != null) {
-                rootView.removeView(overlayView);
-            }
-        }
+        //initializeOverlay(isMyTurn);
 
         realTimeDatabase.child(Constants.GAME_COLLECTION)
                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
@@ -148,44 +147,14 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        isMyTurn = !isMyTurn;
 
-                        FrameLayout rootView = findViewById(android.R.id.content);
-                        View overlayView = rootView.findViewWithTag("overlayViewTag");
 
-                        if (isMyTurn) {
-                            if (overlayView != null) {
-                                rootView.removeView(overlayView);
+                            isMyTurn = !isMyTurn;
+                            if(!isMyTurn){
+                                openFieldInCurrentTurn=false;
                             }
-                            for (View childView : rootView.getTouchables()) {
-                                childView.setEnabled(true);
-                                childView.setClickable(true);
-                            }
-                        } else {
-                            if (overlayView == null) {
-                                overlayView = new View(AsocijacijeActivity.this);
-                                overlayView.setBackgroundColor(Color.TRANSPARENT);
-                                overlayView.setClickable(true);
-                                overlayView.setFocusable(true);
-                                overlayView.setTag("overlayViewTag");
-                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT
-                                );
-                                rootView.addView(overlayView, params);
-                            }
-
-                            for (View childView : rootView.getTouchables()) {
-                                if (childView instanceof EditText) {
-                                    childView.setEnabled(true);
-                                    childView.setClickable(true);
-                                } else {
-                                    childView.setEnabled(false);
-                                    childView.setClickable(false);
-                                }
-                            }
-                        }
-
+                            propusti.setEnabled(isMyTurn);
+                            //initializeOverlay(isMyTurn);
                     }
 
                     @Override
@@ -205,66 +174,102 @@ public class AsocijacijeActivity extends AppCompatActivity {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a1.setText(asocijacija.getA1());
                             a1.setEnabled(false);
+                            listAreOpenA.add("a1");
                         } else if (snapshot.getKey().equals("a2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a2.setText(asocijacija.getA2());
                             a2.setEnabled(false);
+                            listAreOpenA.add("a2");
                         }else if (snapshot.getKey().equals("a3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a3.setText(asocijacija.getA3());
                             a3.setEnabled(false);
+                            listAreOpenA.add("a3");
                         }else if (snapshot.getKey().equals("a4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a4.setText(asocijacija.getA4());
                             a4.setEnabled(false);
+                            listAreOpenA.add("a4");
                         }else if (snapshot.getKey().equals("b1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b1.setText(asocijacija.getB1());
                             b1.setEnabled(false);
+                            listAreOpenA.add("b1");
                         }else if (snapshot.getKey().equals("b2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b2.setText(asocijacija.getB2());
                             b2.setEnabled(false);
-                        }else if (snapshot.getKey().equals("b2")) {
+                            listAreOpenA.add("b3");
+                        }else if (snapshot.getKey().equals("b3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b3.setText(asocijacija.getB3());
                             b3.setEnabled(false);
+                            listAreOpenA.add("b3");
                         }else if (snapshot.getKey().equals("b4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
-                            a4.setText(asocijacija.getB4());
-                            a4.setEnabled(false);
+                            b4.setText(asocijacija.getB4());
+                            b4.setEnabled(false);
+                            listAreOpenA.add("b4");
                         }else if (snapshot.getKey().equals("c1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c1.setText(asocijacija.getC1());
                             c1.setEnabled(false);
+                            listAreOpenA.add("c1");
                         }else if (snapshot.getKey().equals("c2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c2.setText(asocijacija.getC2());
                             c2.setEnabled(false);
+                            listAreOpenA.add("c2");
                         }else if (snapshot.getKey().equals("c3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c3.setText(asocijacija.getC3());
                             c3.setEnabled(false);
+                            listAreOpenA.add("c3");
                         }else if (snapshot.getKey().equals("c4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c4.setText(asocijacija.getC4());
                             c4.setEnabled(false);
+                            listAreOpenA.add("c4");
                         }else if (snapshot.getKey().equals("d1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d1.setText(asocijacija.getD1());
                             d1.setEnabled(false);
+                            listAreOpenA.add("ad1");
                         }else if (snapshot.getKey().equals("d2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d2.setText(asocijacija.getD2());
                             d2.setEnabled(false);
+                            listAreOpenA.add("d2");
                         }else if (snapshot.getKey().equals("d3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d3.setText(asocijacija.getD3());
                             d3.setEnabled(false);
+                            listAreOpenA.add("d3");
                         }else if (snapshot.getKey().equals("d4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d4.setText(asocijacija.getD4());
                             d4.setEnabled(false);
+                            listAreOpenA.add("d4");
+                        }else if (snapshot.getKey().equals("solutionA")) {
+                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                            finalAnswerA.setText(asocijacija.getSolutionA());
+                            finalAnswerA.setEnabled(false);
+                        }else if (snapshot.getKey().equals("solutionB")) {
+                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                            finalAnswerB.setText(asocijacija.getSolutionB());
+                            finalAnswerB.setEnabled(false);
+                        }else if (snapshot.getKey().equals("solutionC")) {
+                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                            finalAnswerC.setText(asocijacija.getSolutionC());
+                            finalAnswerC.setEnabled(false);
+                        }else if (snapshot.getKey().equals("solutionD")) {
+                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                            finalAnswerD.setText(asocijacija.getSolutionD());
+                            finalAnswerD.setEnabled(false);
+                        }else if (snapshot.getKey().equals("finalAnswer")) {
+                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                            finalSolution.setText(asocijacija.getFinalAnswer());
+                            finalSolution.setEnabled(false);
                         }
                     }
 
@@ -299,13 +304,16 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
         propusti.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AsocijacijeActivity.this, SpojniceActivity.class);
-                startActivity(intent);
+            public void onClick(View v) {
+                onSwitchTurnButtonClick(v);
             }
         });
 
         a1.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
                 realTimeDatabase
                         .child(Constants.GAME_COLLECTION)
                         .child(gameId)
@@ -316,6 +324,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                         .setValue(mAuth.getCurrentUser().getUid());
         });
         a2.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -326,6 +338,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         a3.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -336,6 +352,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         a4.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -346,6 +366,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b1.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -356,6 +380,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b2.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -366,6 +394,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b3.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -376,6 +408,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b4.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -386,6 +422,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c1.setOnClickListener(c -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -396,6 +436,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c2.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -406,6 +450,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c3.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -416,6 +464,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c4.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -426,6 +478,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d1.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -436,6 +492,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d2.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -446,6 +506,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d3.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -456,6 +520,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d4.setOnClickListener(a -> {
+            if(openFieldInCurrentTurn){
+                return;
+            }
+            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -465,7 +533,6 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .child("d4")
                     .setValue(mAuth.getCurrentUser().getUid());
         });
-
         startCountdown();
 
         finalAnswerA.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -474,7 +541,22 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalAnswerA.getText().toString().trim(), Solutions.FINAL_ANSWER_A);
                     if(isCorrectAnswer){
-                        finalAnswerA.setEnabled(false);
+                        // todo: Dodati obradu signala iz firebase  else if (snapshot.getKey().equals("solutionA")) {
+                        //                            Asocijacija asocijacija = asocijacije.get(currentRound);
+                        //                            d4.setText(asocijacija.getD4());
+                        //                            d4.setEnabled(false);
+                        realTimeDatabase
+                                .child(Constants.GAME_COLLECTION)
+                                .child(gameId)
+                                .child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                                .child(String.valueOf(currentRound))
+                                .child("fields")
+                                .child("solutionA")
+                                .setValue(mAuth.getCurrentUser().getUid());
+                        int points = 2;
+                        points+= 4 - listAreOpenA.size();
+                        assignPoints(mAuth.getCurrentUser().getUid(),points);
+
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -491,7 +573,17 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalAnswerB.getText().toString().trim(), Solutions.FINAL_ANSWER_B);
                     if(isCorrectAnswer){
-                        finalAnswerB.setEnabled(false);
+                        realTimeDatabase
+                                .child(Constants.GAME_COLLECTION)
+                                .child(gameId)
+                                .child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                                .child(String.valueOf(currentRound))
+                                .child("fields")
+                                .child("solutionB")
+                                .setValue(mAuth.getCurrentUser().getUid());
+                        int points = 2;
+                        points+= 4 - listAreOpenB.size();
+                        assignPoints(mAuth.getCurrentUser().getUid(),points);
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -508,7 +600,17 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalAnswerC.getText().toString().trim(), Solutions.FINAL_ANSWER_C);
                     if(isCorrectAnswer){
-                        finalAnswerC.setEnabled(false);
+                        realTimeDatabase
+                                .child(Constants.GAME_COLLECTION)
+                                .child(gameId)
+                                .child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                                .child(String.valueOf(currentRound))
+                                .child("fields")
+                                .child("solutionC")
+                                .setValue(mAuth.getCurrentUser().getUid());
+                        int points = 2;
+                        points+= 4 - listAreOpenC.size();
+                        assignPoints(mAuth.getCurrentUser().getUid(),points);
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -525,7 +627,17 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalAnswerD.getText().toString().trim(), Solutions.FINAL_ANSWER_D);
                     if(isCorrectAnswer){
-                        finalAnswerD.setEnabled(false);
+                        realTimeDatabase
+                                .child(Constants.GAME_COLLECTION)
+                                .child(gameId)
+                                .child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                                .child(String.valueOf(currentRound))
+                                .child("fields")
+                                .child("solutionD")
+                                .setValue(mAuth.getCurrentUser().getUid());
+                        int points = 2;
+                        points+= 4 - listAreOpenD.size();
+                        assignPoints(mAuth.getCurrentUser().getUid(),points);
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -542,7 +654,35 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalSolution.getText().toString().trim(), Solutions.FINAL_ANSWER);
                     if(isCorrectAnswer){
-                        finalSolution.setEnabled(false);
+                        realTimeDatabase
+                                .child(Constants.GAME_COLLECTION)
+                                .child(gameId)
+                                .child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                                .child(String.valueOf(currentRound))
+                                .child("fields")
+                                .child("finalAnswer")
+                                .setValue(mAuth.getCurrentUser().getUid());
+                        int points = 7;
+                        if(listAreOpenA.size() == 0){
+                            points+= 6;
+                        }else{
+                            points+=4-listAreOpenA.size();
+                        }
+                        if(listAreOpenB.size() == 0){
+                            points+= 6;
+                        }else{
+                            points+=4-listAreOpenB.size();
+                        }if(listAreOpenC.size() == 0){
+                            points+= 6;
+                        }else{
+                            points+=4-listAreOpenC.size();
+                        }if(listAreOpenD.size() == 0){
+                            points+= 6;
+                        }else{
+                            points+=4-listAreOpenD.size();
+                        }
+                        assignPoints(mAuth.getCurrentUser().getUid(),points);
+                        isColumnAAnswerd = true;
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -678,7 +818,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 if (!switchedToAnotherActivity) {
-                    if (answerIsCorrect && currentRound == 0) {
+                    if (countDownTimer.equals(0) && currentRound == 0 || answerIsCorrect && currentRound == 0) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -755,6 +895,8 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 finalAnswerC.setEnabled(true);
                 finalAnswerD.setText("finalAnswerD");
                 finalAnswerD.setEnabled(true);
+                finalSolution.setText("finalSolution");
+                finalSolution.setEnabled(true);
 
                 startCountdown();
 
@@ -764,5 +906,90 @@ public class AsocijacijeActivity extends AppCompatActivity {
         Intent intent = new Intent(AsocijacijeActivity.this, MainActivity.class);
         startActivity(intent);
         switchedToAnotherActivity = true;
+    }
+
+
+    private void enableTouchableViews(ViewGroup parentView, boolean enable) {
+        for (View childView : parentView.getTouchables()) {
+            childView.setEnabled(enable);
+            childView.setClickable(enable);
+        }
+    }
+
+    private void enableEditTextViews(ViewGroup parentView, boolean enable) {
+        for (View childView : parentView.getTouchables()) {
+            if (childView instanceof EditText) {
+                childView.setEnabled(enable);
+                childView.setClickable(enable);
+            }
+        }
+    }
+
+    private View createOverlayView() {
+        View overlayView = new View(this);
+        overlayView.setBackgroundColor(Color.TRANSPARENT);
+        overlayView.setClickable(true);
+        overlayView.setFocusable(true);
+        overlayView.setTag("overlayViewTag");
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        overlayView.setLayoutParams(params);
+
+        return overlayView;
+    }
+
+    private void initializeOverlay(boolean isMyTurn) {
+        FrameLayout rootView = findViewById(android.R.id.content);
+        View overlayView = rootView.findViewWithTag("overlayViewTag");
+
+        if (!isMyTurn) {
+            if (overlayView == null) {
+                overlayView = createOverlayView();
+                rootView.addView(overlayView);
+            }
+            enableTouchableViews(rootView, false);
+            enableEditTextViews(rootView, true);
+        } else {
+            if (overlayView != null) {
+                rootView.removeView(overlayView);
+            }
+            enableTouchableViews(rootView, true);
+            enableEditTextViews(rootView, true);
+        }
+    }
+
+    public void onSwitchTurnButtonClick(View view) {
+        realTimeDatabase.child(Constants.GAME_COLLECTION)
+                .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
+                .child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
+    }
+
+    private void assignPoints(String playerId, int points) {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        String gameID = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
+        DatabaseReference userRef = realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameID);
+
+        String pointsKey = playerId.equals(player1UserId) ? "bodovi1" : "bodovi2";
+
+        DatabaseReference pointsRef = userRef.child(pointsKey);
+
+        pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Integer currentPoints = dataSnapshot.getValue(Integer.class);
+                if (currentPoints != null) {
+                    int newPoints = currentPoints + points;
+                    pointsRef.setValue(newPoints);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 }
