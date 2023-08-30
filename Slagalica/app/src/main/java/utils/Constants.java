@@ -22,5 +22,10 @@ public class Constants {
 
     public static String SHARED_PREFERENCES_KOZNAZNA_ID = "koZnaZna";
 
+    public static String SHARED_PREFERENCES_ASOCIJACIJE_ID = "asocijacije";
+    public static String SHARED_PREFERENCES_SPOJNICE_ID = "spojnice";
+
     public static String OPONENT_ID = "OponentId";
+
+    public static String SHARED_PREFERENCES_IS_PLAYER_1 = "isPlayerOne";
 }

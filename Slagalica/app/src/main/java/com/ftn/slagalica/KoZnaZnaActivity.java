@@ -47,7 +47,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
     private List<Pitanje> visePitanja;
     private Button button1, answer1, answer2, answer3, answer4;
     private TextView countdownTextView, question;
-    private static final int TOTAL_REPETITIONS = 2;
+    private static final int TOTAL_REPETITIONS = 5;
     private static final long COUNTDOWN_INTERVAL = 1000; // 5 seconds
     private static final long COUNTDOWN_DURATION = 5000; // 5 seconds
     private boolean isButtonEnabled = true;
@@ -61,11 +61,11 @@ public class KoZnaZnaActivity extends AppCompatActivity {
     private DatabaseReference realTimeDatabase;
 
     private FirebaseAuth mAuth;
-    private String player1UserId ;
-    private String player2UserId,gameId ;
-
+    private String player1UserId;
+    private String player2UserId, gameId;
     private List<KoZnaZnaAnswerModel> answers = new ArrayList<>();
-
+    private boolean isPlayer1 = false;
+    private boolean answeredInCurrentRepetition = false;
 
 
     @Override
@@ -80,9 +80,10 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         player1UserId = mAuth.getCurrentUser().getUid();
 
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        player2UserId = preferences.getString(Constants.OPONENT_ID,"");
+        player2UserId = preferences.getString(Constants.OPONENT_ID, "");
+        isPlayer1 = preferences.getBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
 
-        gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID,"");
+        gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
 
         button1 = findViewById(R.id.propustiKoZnaZna);
         answer1 = findViewById(R.id.answer1);
@@ -114,80 +115,126 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
 
         firestore.collection(Constants.QUESTIONS_COLLECTION).get().addOnCompleteListener(task -> {
-           if(task.isSuccessful()){
-               List<Pitanje> pitanja = task.getResult().toObjects(Pitanje.class);
-               int iterator = 0;
-               for(DocumentSnapshot documentSnapshot: task.getResult()){
-                   pitanja.get(iterator++).setId(documentSnapshot.getId());
-               }
-               Collections.shuffle(pitanja);
-               visePitanja = pitanja.subList(0,2);
-               startTimer();
-               Pitanje pitanje = visePitanja.get(repetitionCount);
-               question.setText(pitanje.getQuestion());
-               answer1.setText(pitanje.getOdgovor1());
-               answer2.setText(pitanje.getOdgovor2());
-               answer3.setText(pitanje.getOdgovor3());
-               answer4.setText(pitanje.getOdgovor4());
-           }
-           realTimeDatabase.child(Constants.GAME_COLLECTION)
+            if (task.isSuccessful()) {
+                List<Pitanje> pitanja = task.getResult().toObjects(Pitanje.class);
+                int iterator = 0;
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    pitanja.get(iterator++).setId(documentSnapshot.getId());
+                }
+                visePitanja = pitanja.subList(0, 5);
+                startTimer();
+                Pitanje pitanje = visePitanja.get(repetitionCount);
+                question.setText(pitanje.getQuestion());
+                answer1.setText(pitanje.getOdgovor1());
+                answer2.setText(pitanje.getOdgovor2());
+                answer3.setText(pitanje.getOdgovor3());
+                answer4.setText(pitanje.getOdgovor4());
+            }
+            realTimeDatabase.child(Constants.GAME_COLLECTION)
                     .child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
                     .child(String.valueOf(repetitionCount)).addChildEventListener(new ChildEventListener() {
 
-                       @Override
-                       public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                           KoZnaZnaAnswerModel model = snapshot.getValue(KoZnaZnaAnswerModel.class);
-                           if(model == null){
-                               return;
-                           }
-                           answers.add(model);
-                           if(answers.size() == 2){
-                               Long player1Timestamp;
-                               Long player2Timestamp;
-                               if(snapshot.getKey().equals(mAuth.getCurrentUser().getUid())){
-                                   player1Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
-                                   player2Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            KoZnaZnaAnswerModel model = snapshot.getValue(KoZnaZnaAnswerModel.class);
+                            answers.add(model);
 
-                               }else{
-                                   player1Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
-                                   player2Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
-                               }
+                            if (isPlayer1) {
+                                if (answers.size() == 2) {
+                                    Long player1Timestamp;
+                                    Long player2Timestamp;
+                                    boolean player1CorrectAnswered = false;
+                                    boolean player2CorrectAnswered = false;
 
-                               if (player1Timestamp < player2Timestamp) {
-                                   assignPoints(gameId, player1UserId, 10);
-                                   assignPoints(gameId, player2UserId, 5);
-                               } else if (player1Timestamp > player2Timestamp) {
-                                   assignPoints(gameId, player2UserId, 10);
-                                   assignPoints(gameId, player1UserId, 5);
-                               } else{
-                                   assignPoints(gameId, player2UserId, 5);
-                                   assignPoints(gameId, player1UserId, 5);
-                               }
-                               realTimeDatabase.removeEventListener(this);
-                           }
+                                    if (snapshot.getKey().equals(mAuth.getCurrentUser().getUid())) {
 
-                       }
+                                        if (answers.get(1).getTimeStamp() != null) {
+                                            player1Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                                        } else {
+                                            player1Timestamp = null;
+                                        }
+                                        player1CorrectAnswered = answers.get(1).isCorrectAnswer();
 
-                       @Override
-                       public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                        if (answers.get(0).getTimeStamp() != null) {
+                                            player2Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                                        } else {
+                                            player2Timestamp = null;
+                                        }
+                                        player2CorrectAnswered = answers.get(0).isCorrectAnswer();
 
-                       }
+                                    } else {
+                                        if (answers.get(0).getTimeStamp() != null) {
+                                            player1Timestamp = Long.valueOf(answers.get(0).getTimeStamp());
+                                        } else {
+                                            player1Timestamp = null;
+                                        }
+                                        player1CorrectAnswered = answers.get(0).isCorrectAnswer();
 
-                       @Override
-                       public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                                        if (answers.get(1).getTimeStamp() != null) {
+                                            player2Timestamp = Long.valueOf(answers.get(1).getTimeStamp());
+                                        } else {
+                                            player2Timestamp = null;
+                                        }
+                                        player2CorrectAnswered = answers.get(1).isCorrectAnswer();
+                                    }
 
-                       }
+                                    if (!player1CorrectAnswered) {
 
-                       @Override
-                       public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                        if (player1Timestamp != null) {
+                                            assignPoints(player1UserId, -5);
+                                        }
 
-                       }
+                                        if (player2CorrectAnswered) {
+                                            assignPoints(player2UserId, 10);
+                                        }
+                                    }
 
-                       @Override
-                       public void onCancelled(@NonNull DatabaseError error) {
+                                    if (!player2CorrectAnswered) {
 
-                       }
-                   });
+                                        if (player2Timestamp != null) {
+                                            assignPoints(player2UserId, -5);
+                                        }
+
+                                        if (player1CorrectAnswered) {
+                                            assignPoints(player1UserId, 10);
+                                        }
+                                    }
+
+                                    if (player1CorrectAnswered && player2CorrectAnswered) {
+                                        if (player1Timestamp < player2Timestamp) {
+                                            assignPoints(player1UserId, 10);
+                                            assignPoints(player2UserId, 0);
+                                        } else if (player1Timestamp > player2Timestamp) {
+                                            assignPoints(player2UserId, 10);
+                                            assignPoints(player1UserId, 0);
+                                        } else {
+                                            assignPoints(player2UserId, 5);
+                                            assignPoints(player1UserId, 5);
+                                        }
+                                    }
+
+                                    realTimeDatabase.removeEventListener(this);
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
         });
 
     }
@@ -198,8 +245,19 @@ public class KoZnaZnaActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 countdownTextView.setText(String.valueOf(timeleft--));
             }
+
             @Override
             public void onFinish() {
+                if (!answeredInCurrentRepetition) {
+                    realTimeDatabase
+                            .child(Constants.GAME_COLLECTION)
+                            .child(gameId)
+                            .child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
+                            .child(String.valueOf(repetitionCount))
+                            .child(mAuth.getCurrentUser().getUid())
+                            .setValue(new KoZnaZnaAnswerModel(false, null));
+                }
+
                 repetitionCount++;
 
                 if (repetitionCount < TOTAL_REPETITIONS) {
@@ -209,6 +267,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
                     answer2.setEnabled(false);
                     answer3.setEnabled(false);
                     answer4.setEnabled(false);
+
                     handlerForSleep.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -231,8 +290,10 @@ public class KoZnaZnaActivity extends AppCompatActivity {
                             answer4.setEnabled(true);
 
                             startTimer();
+
+                            answeredInCurrentRepetition = false;
                         }
-                    },1000);
+                    }, 1000);
                 } else {
                     Intent intent = new Intent(KoZnaZnaActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -243,6 +304,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
 
         }.start();
     }
+
     protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {
@@ -251,29 +313,26 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         handler.removeCallbacksAndMessages(null);
     }
 
-//
-//
-    private void checkAnswer(String selectedAnswer){
+    private void checkAnswer(String selectedAnswer) {
 
         boolean isCorrectAnswer = false;
 
         String correctAnswer = visePitanja.get(repetitionCount).getCorrectAnswer();
 
-        if(selectedAnswer.equals(correctAnswer)){
+        if (selectedAnswer.equals(correctAnswer)) {
             Button selectedButton = getButtonForAnswerText(selectedAnswer);
             selectedButton.setBackgroundColor(Color.GREEN);
             isCorrectAnswer = true;
-        }else{
+        } else {
             highlightCorrectAndIncorrectAnswers(correctAnswer);
             Button selectedButton = getButtonForAnswerText(selectedAnswer);
             selectedButton.setBackgroundColor(Color.RED);
-            assignPoints(gameId,player1UserId,-5);
         }
 
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        String userId = preferences.getString(Constants.SHARED_PREFERENCES_USER_ID,"");
-        String gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID,"");
-        String koId = preferences.getString(Constants.SHARED_PREFERENCES_KOZNAZNA_ID,"");
+        String userId = preferences.getString(Constants.SHARED_PREFERENCES_USER_ID, "");
+        String gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
+        String koId = preferences.getString(Constants.SHARED_PREFERENCES_KOZNAZNA_ID, "");
 
         realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).child(Constants.SHARED_PREFERENCES_KOZNAZNA_ID)
                 .child(String.valueOf(repetitionCount)).child(userId).setValue(new KoZnaZnaAnswerModel(isCorrectAnswer, String.valueOf(Instant.now().toEpochMilli())));
@@ -285,13 +344,17 @@ public class KoZnaZnaActivity extends AppCompatActivity {
         answer3.setEnabled(false);
         answer4.setEnabled(false);
 
+        answeredInCurrentRepetition = true;
     }
 
-    private void assignPoints(String gameId, String playerId, int points) {
+    private void assignPoints(String playerId, int points) {
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        String gameID = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID,"");
+        String gameID = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
         DatabaseReference userRef = realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameID);
-        DatabaseReference pointsRef = userRef.child("bodovi1");
+
+        String pointsKey = playerId.equals(player1UserId) ? "bodovi1" : "bodovi2";
+
+        DatabaseReference pointsRef = userRef.child(pointsKey);
 
         pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -309,6 +372,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
             }
         });
     }
+
     private Button getButtonForAnswerText(String answerText) {
         if (answer1.getText().toString().equals(answerText)) {
             return answer1;

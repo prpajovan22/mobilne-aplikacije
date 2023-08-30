@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,11 +48,16 @@ public class SpojniceActivity extends AppCompatActivity {
     private TextView countdownText1;
     private String selectedButton;
 
+    private CountDownTimer countDownTimer;
+
+    private boolean switchedToAnotherActivity = false;
+
     private FirebaseAuth mAuth;
-    private String player1UserId,player2UserId;
+    private String player1UserId,player2UserId,gameId;
     private Button leftSide1, leftSide2, leftSide3, leftSide4,leftSide5, rightSide1, rightSide2, rightSide3, rightSide4
             ,rightSide5;
 
+    private boolean isMyTurn = false;
     private FirebaseFirestore firestore;
 
     @Override
@@ -58,7 +65,7 @@ public class SpojniceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spojnice);
 
-        //countdownText1.findViewById(R.id.countdownTextSpojnice);
+        countdownText1.findViewById(R.id.countdownTextSpojnice);
 
         leftSide1 = findViewById(R.id.A1);
         leftSide2 = findViewById(R.id.A2);
@@ -72,16 +79,16 @@ public class SpojniceActivity extends AppCompatActivity {
         rightSide4 = findViewById(R.id.D2);
         rightSide5 = findViewById(R.id.C3);
 
-        firestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         player1UserId = mAuth.getCurrentUser().getUid();
-
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        player2UserId = preferences.getString(Constants.OPONENT_ID,"");
+        player2UserId = preferences.getString(Constants.OPONENT_ID, "");
+        isMyTurn = preferences.getBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
+        gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
 
-        String gameId = Constants.SHARED_PREFERENCES_GAME_ID;
-
-        //startCountdown();
+        startCountdown();
 
 
         firestore.collection(Constants.SPOJNICE_COLLECTION).get().addOnCompleteListener(task -> {
@@ -123,6 +130,7 @@ public class SpojniceActivity extends AppCompatActivity {
                 if(selectedButton == null){
                     leftSide2.setBackgroundColor(Color.GREEN);
                     selectedButton = leftSide2.getText().toString();
+                    leftSide1.setEnabled(false);
                 }
             }
         });
@@ -132,6 +140,7 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 leftSide3.setBackgroundColor(Color.GREEN);
                 selectedButton = leftSide3.getText().toString();
+                leftSide1.setEnabled(false);
             }
         });
 
@@ -140,6 +149,7 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 leftSide4.setBackgroundColor(Color.GREEN);
                 selectedButton = leftSide4.getText().toString();
+                leftSide1.setEnabled(false);
             }
         });
 
@@ -148,6 +158,7 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 leftSide5.setBackgroundColor(Color.GREEN);
                 selectedButton = leftSide5.getText().toString();
+                leftSide1.setEnabled(false);
             }
         });
 
@@ -260,59 +271,88 @@ public class SpojniceActivity extends AppCompatActivity {
 
     }
 
-    /*private void checkAndHandleMatch(Button rightButton) {
-        String selectedText = selectedButton;
-        Spojnice trenutnaSpojnica = spojnice.get(currentRound);
-
-        if (rightButton.getText().toString().equals(trenutnaSpojnica.getAnswers().get(selectedText))){
-
-            rightButton.setBackgroundColor(Color.GREEN);
-            selectedButton = null;
-            rightButton.setEnabled(false);
-            //String leftButtonId = selectedText;
-
-        } else {
-            selectedButton = null;
-            //String leftButtonId = selectedText;
-        }
-    }*/
-
-    /*private void startCountdown() {
-        countdownRunnable = new Runnable() {
+    private void startCountdown() {
+        countDownTimer = new CountDownTimer(2 * 60 * 1000, 1000) {
             @Override
-            public void run() {
-                if (countdownTime > 0) {
-                    String timeString = String.format("%02d:%02d", countdownTime / 60, countdownTime % 60);
-                    countdownText1.setText(timeString);
+            public void onTick(long millisUntilFinished) {
+                countdownText1.setText(String.valueOf(millisUntilFinished / 1000));
+            }
 
-                    countdownTime--;
-                    handler.postDelayed(this, 1000);
+            @Override
+            public void onFinish() {
+                if (!switchedToAnotherActivity) {
+                    if (currentRound == 0) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                resetTimer();
+                                fetchDataAndUpdateUI();
+                            }
+                        }, 5000);
+                    } else if (currentRound == 1) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                switchToAnotherActivity();
+                            }
+                        }, 5000);
+                    } else {
+                    }
                 } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            countdownTime = 30;
-                            startCountdown();
-                        }
-                    }, 5000);
+                    resetTimer();
+                    switchedToAnotherActivity = false;
                 }
             }
-        };
+        }.start();
+    }
 
-
-        handler.postDelayed(countdownRunnable, 1000);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SpojniceActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 35000);
+    private void resetTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            startCountdown();
+        }
     }
 
     protected void onDestroy () {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
-    }*/
+    }
+
+    private void switchToAnotherActivity() {
+        Intent intent = new Intent(SpojniceActivity.this, MainActivity.class);
+        startActivity(intent);
+        switchedToAnotherActivity = true;
+    }
+
+    private void fetchDataAndUpdateUI() {
+        isMyTurn = !isMyTurn;
+
+        currentRound = 1;
+        Spojnice spojnica = spojnice.get(1);
+        leftSide1.setText(spojnica.getLeftColumn().get(0));
+        leftSide1.setEnabled(true);
+        leftSide2.setText(spojnica.getLeftColumn().get(1));
+        leftSide2.setEnabled(true);
+        leftSide3.setText(spojnica.getLeftColumn().get(2));
+        leftSide3.setEnabled(true);
+        leftSide4.setText(spojnica.getLeftColumn().get(3));
+        leftSide4.setEnabled(true);
+        leftSide5.setText(spojnica.getLeftColumn().get(4));
+        leftSide5.setEnabled(true);
+
+        Collections.shuffle(spojnica.getRightColumn());
+        rightSide1.setText(spojnica.getRightColumn().get(0));
+        rightSide1.setEnabled(true);
+        rightSide2.setText(spojnica.getRightColumn().get(1));
+        rightSide2.setEnabled(true);
+        rightSide3.setText(spojnica.getRightColumn().get(2));
+        rightSide3.setEnabled(true);
+        rightSide4.setText(spojnica.getRightColumn().get(3));
+        rightSide4.setEnabled(true);
+        rightSide5.setText(spojnica.getRightColumn().get(4));
+        rightSide5.setEnabled(true);
+
+        startCountdown();
+
+    }
 }
