@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -90,6 +91,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private boolean isColumnDAnswerd = false;
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -903,7 +905,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
     }
 
     private void switchToAnotherActivity() {
-        Intent intent = new Intent(AsocijacijeActivity.this, MainActivity.class);
+        Intent intent = new Intent(AsocijacijeActivity.this, SpojniceActivity.class);
         startActivity(intent);
         switchedToAnotherActivity = true;
     }

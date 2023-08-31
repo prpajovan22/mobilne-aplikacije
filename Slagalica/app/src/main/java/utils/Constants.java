@@ -27,5 +27,7 @@ public class Constants {
 
     public static String OPONENT_ID = "OponentId";
 
+    public static String OPONENT_USERNAME = "Oponent_username";
+
     public static String SHARED_PREFERENCES_IS_PLAYER_1 = "isPlayerOne";
 }

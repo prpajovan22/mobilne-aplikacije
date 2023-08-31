@@ -295,7 +295,7 @@ public class KoZnaZnaActivity extends AppCompatActivity {
                         }
                     }, 1000);
                 } else {
-                    Intent intent = new Intent(KoZnaZnaActivity.this, MainActivity.class);
+                    Intent intent = new Intent(KoZnaZnaActivity.this, AsocijacijeActivity.class);
                     startActivity(intent);
                     finish();
                 }

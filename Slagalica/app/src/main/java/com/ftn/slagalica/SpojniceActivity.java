@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,11 +47,12 @@ public class SpojniceActivity extends AppCompatActivity {
     private int countdownTime = 30;
     private int currentRound = 0;
     private TextView countdownText1;
-    private String selectedButton;
+    private Button selectedButton;
 
     private CountDownTimer countDownTimer;
 
     private boolean switchedToAnotherActivity = false;
+    private DatabaseReference realTimeDatabase;
 
     private FirebaseAuth mAuth;
     private String player1UserId,player2UserId,gameId;
@@ -60,12 +62,16 @@ public class SpojniceActivity extends AppCompatActivity {
     private boolean isMyTurn = false;
     private FirebaseFirestore firestore;
 
+    private int points = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spojnice);
 
-        countdownText1.findViewById(R.id.countdownTextSpojnice);
+        countdownText1 = findViewById(R.id.countdownTextSpojnice);
+
+        firestore = FirebaseFirestore.getInstance();
 
         leftSide1 = findViewById(R.id.A1);
         leftSide2 = findViewById(R.id.A2);
@@ -80,7 +86,7 @@ public class SpojniceActivity extends AppCompatActivity {
         rightSide5 = findViewById(R.id.C3);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        realTimeDatabase = FirebaseDatabase.getInstance().getReference();
 
         player1UserId = mAuth.getCurrentUser().getUid();
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -90,6 +96,26 @@ public class SpojniceActivity extends AppCompatActivity {
 
         startCountdown();
 
+        realTimeDatabase.child(Constants.GAME_COLLECTION)
+                .child(gameId).child(Constants.SHARED_PREFERENCES_SPOJNICE_ID)
+                .child("switchTurn").addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        isMyTurn = !isMyTurn;
+                        if(!isMyTurn){
+                            disableInteractivity();
+                        }else{
+                            enableInteractivity();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         firestore.collection(Constants.SPOJNICE_COLLECTION).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -118,7 +144,7 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(selectedButton == null){
                     leftSide1.setBackgroundColor(Color.GREEN);
-                    selectedButton = leftSide1.getText().toString();
+                    selectedButton = leftSide1;
                     leftSide1.setEnabled(false);
                 }
             }
@@ -129,7 +155,7 @@ public class SpojniceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(selectedButton == null){
                     leftSide2.setBackgroundColor(Color.GREEN);
-                    selectedButton = leftSide2.getText().toString();
+                    selectedButton = leftSide2;
                     leftSide1.setEnabled(false);
                 }
             }
@@ -139,7 +165,7 @@ public class SpojniceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 leftSide3.setBackgroundColor(Color.GREEN);
-                selectedButton = leftSide3.getText().toString();
+                selectedButton = leftSide3;
                 leftSide1.setEnabled(false);
             }
         });
@@ -148,7 +174,7 @@ public class SpojniceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 leftSide4.setBackgroundColor(Color.GREEN);
-                selectedButton = leftSide4.getText().toString();
+                selectedButton = leftSide4;
                 leftSide1.setEnabled(false);
             }
         });
@@ -157,7 +183,7 @@ public class SpojniceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 leftSide5.setBackgroundColor(Color.GREEN);
-                selectedButton = leftSide5.getText().toString();
+                selectedButton = leftSide5;
                 leftSide1.setEnabled(false);
             }
         });
@@ -208,71 +234,31 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
     private void checkAndHandleMatch(Button rightButton) {
-        String selectedText = selectedButton;
+        String selectedText = selectedButton.getText().toString();
         Spojnice trenutnaSpojnica = spojnice.get(currentRound);
-
-        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        int currentPlayerPoints = preferences.getInt(Constants.SHARED_PREFERENCES_GAME_ID, 0);
 
         if (rightButton.getText().toString().equals(trenutnaSpojnica.getAnswers().get(selectedText))) {
             rightButton.setBackgroundColor(Color.GREEN);
             selectedButton = null;
             rightButton.setEnabled(false);
-            currentPlayerPoints += 10;
+            points+= 2;
+            assignPoints(mAuth.getCurrentUser().getUid(),points);
         } else {
+            selectedButton.setBackgroundColor(Color.RED);
             selectedButton = null;
-            currentPlayerPoints -= 10;
+            points-= 0;
         }
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(Constants.SHARED_PREFERENCES_GAME_ID, currentPlayerPoints);
-        editor.apply();
-
-        String gameId = Constants.SHARED_PREFERENCES_GAME_ID;
-        DatabaseReference gameRef = FirebaseDatabase.getInstance().getReference("games").child(gameId);
-        int finalCurrentPlayerPoints = currentPlayerPoints;
-        gameRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    GameFirebaseModel game = snapshot.getValue(GameFirebaseModel.class);
-
-                    if (game != null) {
-                        if (player2UserId.equals(mAuth.getCurrentUser().getUid())) {
-                            game.setBodovi2(finalCurrentPlayerPoints);
-                        } else {
-                            game.setBodovi1(finalCurrentPlayerPoints);
-                        }
-
-                        DatabaseReference gameUpdateRef = FirebaseDatabase.getInstance().getReference("games").child(gameId);
-                        Map<String, Object> updateValues = new HashMap<>();
-                        updateValues.put("bodovi1", game.getBodovi1());
-                        updateValues.put("bodovi2", game.getBodovi2());
-
-                        gameUpdateRef.updateChildren(updateValues)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                    }
-                                });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
 
     }
 
+    public void onSwitchTurnButtonClick() {
+        realTimeDatabase.child(Constants.GAME_COLLECTION)
+                .child(gameId).child(Constants.SHARED_PREFERENCES_SPOJNICE_ID)
+                .child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
+    }
+
     private void startCountdown() {
-        countDownTimer = new CountDownTimer(2 * 60 * 1000, 1000) {
+        countDownTimer = new CountDownTimer(30 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countdownText1.setText(String.valueOf(millisUntilFinished / 1000));
@@ -287,6 +273,7 @@ public class SpojniceActivity extends AppCompatActivity {
                                 resetTimer();
                                 isMyTurn = !isMyTurn;
                                 fetchDataAndUpdateUI();
+                                onSwitchTurnButtonClick();
                             }
                         }, 5000);
                     } else if (currentRound == 1) {
@@ -319,7 +306,7 @@ public class SpojniceActivity extends AppCompatActivity {
     }
 
     private void switchToAnotherActivity() {
-        Intent intent = new Intent(SpojniceActivity.this, MainActivity.class);
+        Intent intent = new Intent(SpojniceActivity.this, PobednikActivity.class);
         startActivity(intent);
         switchedToAnotherActivity = true;
     }
@@ -388,5 +375,31 @@ public class SpojniceActivity extends AppCompatActivity {
         rightSide3.setEnabled(false);
         rightSide4.setEnabled(false);
         rightSide5.setEnabled(false);
+    }
+
+    private void assignPoints(String playerId, int points) {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        String gameID = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
+        DatabaseReference userRef = realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameID);
+
+        String pointsKey = playerId.equals(player1UserId) ? "bodovi1" : "bodovi2";
+
+        DatabaseReference pointsRef = userRef.child(pointsKey);
+
+        pointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Integer currentPoints = dataSnapshot.getValue(Integer.class);
+                if (currentPoints != null) {
+                    int newPoints = currentPoints + points;
+                    pointsRef.setValue(newPoints);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 }
