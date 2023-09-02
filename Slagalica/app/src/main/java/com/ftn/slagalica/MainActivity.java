@@ -61,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
             realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.getValue(String.class).equals("Initial")){
+                    if (snapshot.getValue(String.class).equals("Initial")) {
                         return;
                     }
                     SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(Constants.SHARED_PREFERENCES_GAME_ID,snapshot.getValue(String.class));
+                    editor.putString(Constants.SHARED_PREFERENCES_GAME_ID, snapshot.getValue(String.class));
+                    editor.putBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
                     editor.apply();
                     Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
                     startActivity(intent);
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser != null) {
                     SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-                    String userId = preferences.getString(Constants.SHARED_PREFERENCES_USER_ID,"");
+                    String userId = preferences.getString(Constants.SHARED_PREFERENCES_USER_ID, "");
 
                     DocumentReference userRef = FirebaseFirestore.getInstance()
                             .collection(Constants.USER_COLLECTION)
@@ -122,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
                                                         realTimeDatabase.child(Constants.USER_COLLECTION).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                for (DataSnapshot s : snapshot.getChildren()){
+                                                                for (DataSnapshot s : snapshot.getChildren()) {
                                                                     UserFirebaseModel model = s.getValue(UserFirebaseModel.class);
                                                                     String userId = s.getKey();
-                                                                    if(!userId.equals(mAuth.getCurrentUser().getUid())){
+                                                                    if (!userId.equals(mAuth.getCurrentUser().getUid())) {
                                                                         realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                             @Override
                                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                                                                                Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
                                                                                 SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                                                                                 SharedPreferences.Editor editor = preferences.edit();
                                                                                 editor.putString(Constants.OPONENT_ID, userId);
@@ -147,10 +148,11 @@ public class MainActivity extends AppCompatActivity {
                                                                         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                                                                         SharedPreferences.Editor editor = preferences.edit();
                                                                         editor.putString(Constants.SHARED_PREFERENCES_GAME_ID, gameId);
+                                                                        editor.putBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, true);
                                                                         editor.apply();
 
                                                                         realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").setValue(gameId);
-                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1","test2","test3",0,0));
+                                                                        realTimeDatabase.child(Constants.GAME_COLLECTION).child(gameId).setValue(new GameFirebaseModel("test1", "test2", "test3", 0, 0));
 
                                                                         realTimeDatabase.removeEventListener(this);
                                                                         break;
@@ -185,12 +187,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-                login.setOnClickListener(new View.OnClickListener() {
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, Login.class);
@@ -211,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void logoutUser(){
+    private void logoutUser() {
         mAuth.signOut();
     }
 
@@ -226,12 +223,12 @@ public class MainActivity extends AppCompatActivity {
         Button logout = findViewById(R.id.logout);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser!= null){
+        if (currentUser != null) {
             login.setVisibility(View.GONE);
             register.setVisibility(View.GONE);
             profile.setVisibility(View.VISIBLE);
             logout.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             login.setVisibility(View.VISIBLE);
             register.setVisibility(View.VISIBLE);
             profile.setVisibility(View.GONE);
@@ -239,12 +236,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         FirebaseAuth.getInstance().signOut();
     }
-
-
 
 
 }
