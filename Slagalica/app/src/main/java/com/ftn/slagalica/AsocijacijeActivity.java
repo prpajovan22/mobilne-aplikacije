@@ -83,14 +83,6 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private List<String> listAreOpenD = new ArrayList<>();
 
-    private boolean isColumnAAnswerd = false;
-
-    private boolean isColumnBAnswerd = false;
-
-    private boolean isColumnCAnswerd = false;
-
-    private boolean isColumnDAnswerd = false;
-
     @SuppressLint("SuspiciousIndentation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +133,14 @@ public class AsocijacijeActivity extends AppCompatActivity {
         isMyTurn = preferences.getBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
         gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
 
-        //initializeOverlay(isMyTurn);
+        propusti.setEnabled(isMyTurn);
+
+        firestore.collection(Constants.ASOCIATION_COLLECTION).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<Asocijacija> asocijacijeFromFirebase = task.getResult().toObjects(Asocijacija.class);
+                asocijacije = asocijacijeFromFirebase;
+            }
+        });
 
         realTimeDatabase.child(Constants.GAME_COLLECTION)
                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID)
@@ -149,7 +148,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                        if (snapshot.getValue(String.class) == null) {
+                            return;
+                        }
 
                             isMyTurn = !isMyTurn;
                             if(!isMyTurn){
@@ -177,81 +178,113 @@ public class AsocijacijeActivity extends AppCompatActivity {
                             a1.setText(asocijacija.getA1());
                             a1.setEnabled(false);
                             listAreOpenA.add("a1");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         } else if (snapshot.getKey().equals("a2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a2.setText(asocijacija.getA2());
                             a2.setEnabled(false);
                             listAreOpenA.add("a2");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("a3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a3.setText(asocijacija.getA3());
                             a3.setEnabled(false);
                             listAreOpenA.add("a3");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("a4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             a4.setText(asocijacija.getA4());
                             a4.setEnabled(false);
                             listAreOpenA.add("a4");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("b1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b1.setText(asocijacija.getB1());
                             b1.setEnabled(false);
-                            listAreOpenA.add("b1");
+                            listAreOpenB.add("b1");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("b2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b2.setText(asocijacija.getB2());
                             b2.setEnabled(false);
-                            listAreOpenA.add("b3");
+                            listAreOpenB.add("b3");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("b3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b3.setText(asocijacija.getB3());
                             b3.setEnabled(false);
-                            listAreOpenA.add("b3");
+                            listAreOpenB.add("b3");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("b4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             b4.setText(asocijacija.getB4());
                             b4.setEnabled(false);
-                            listAreOpenA.add("b4");
+                            listAreOpenB.add("b4");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("c1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c1.setText(asocijacija.getC1());
                             c1.setEnabled(false);
-                            listAreOpenA.add("c1");
+                            listAreOpenC.add("c1");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("c2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c2.setText(asocijacija.getC2());
                             c2.setEnabled(false);
-                            listAreOpenA.add("c2");
+                            listAreOpenC.add("c2");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("c3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c3.setText(asocijacija.getC3());
                             c3.setEnabled(false);
-                            listAreOpenA.add("c3");
+                            listAreOpenC.add("c3");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("c4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             c4.setText(asocijacija.getC4());
                             c4.setEnabled(false);
-                            listAreOpenA.add("c4");
+                            listAreOpenC.add("c4");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("d1")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d1.setText(asocijacija.getD1());
                             d1.setEnabled(false);
-                            listAreOpenA.add("ad1");
+                            listAreOpenD.add("ad1");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("d2")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d2.setText(asocijacija.getD2());
                             d2.setEnabled(false);
-                            listAreOpenA.add("d2");
+                            listAreOpenD.add("d2");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("d3")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d3.setText(asocijacija.getD3());
                             d3.setEnabled(false);
-                            listAreOpenA.add("d3");
+                            listAreOpenD.add("d3");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("d4")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             d4.setText(asocijacija.getD4());
                             d4.setEnabled(false);
-                            listAreOpenA.add("d4");
+                            listAreOpenD.add("d4");
+                            openFieldInCurrentTurn = isMyTurn;
+                            propusti.setEnabled(isMyTurn);
                         }else if (snapshot.getKey().equals("solutionA")) {
                             Asocijacija asocijacija = asocijacije.get(currentRound);
                             finalAnswerA.setText(asocijacija.getSolutionA());
@@ -296,14 +329,6 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     }
                 });
 
-        firestore.collection(Constants.ASOCIATION_COLLECTION).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                List<Asocijacija> asocijacije1 = task.getResult().toObjects(Asocijacija.class);
-                asocijacije1.addAll(asocijacije1);
-                asocijacije = asocijacije1;
-            }
-        });
-
         propusti.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -312,10 +337,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
         });
 
         a1.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
                 realTimeDatabase
                         .child(Constants.GAME_COLLECTION)
                         .child(gameId)
@@ -326,10 +350,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                         .setValue(mAuth.getCurrentUser().getUid());
         });
         a2.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -340,10 +363,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         a3.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -354,10 +376,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         a4.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -368,10 +389,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b1.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -382,10 +402,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b2.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -396,10 +415,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b3.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -410,10 +428,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         b4.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -424,10 +441,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c1.setOnClickListener(c -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -438,10 +454,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c2.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -452,10 +467,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c3.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -466,10 +480,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         c4.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -480,10 +493,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d1.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -494,10 +506,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d2.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -508,10 +519,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d3.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -522,10 +532,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                     .setValue(mAuth.getCurrentUser().getUid());
         });
         d4.setOnClickListener(a -> {
-            if(openFieldInCurrentTurn){
+            if(!isMyTurn || openFieldInCurrentTurn){
                 return;
             }
-            openFieldInCurrentTurn = true;
             realTimeDatabase
                     .child(Constants.GAME_COLLECTION)
                     .child(gameId)
@@ -543,10 +552,6 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     boolean isCorrectAnswer = checkEnteredWord(finalAnswerA.getText().toString().trim(), Solutions.FINAL_ANSWER_A);
                     if(isCorrectAnswer){
-                        // todo: Dodati obradu signala iz firebase  else if (snapshot.getKey().equals("solutionA")) {
-                        //                            Asocijacija asocijacija = asocijacije.get(currentRound);
-                        //                            d4.setText(asocijacija.getD4());
-                        //                            d4.setEnabled(false);
                         realTimeDatabase
                                 .child(Constants.GAME_COLLECTION)
                                 .child(gameId)
@@ -684,7 +689,6 @@ public class AsocijacijeActivity extends AppCompatActivity {
                             points+=4-listAreOpenD.size();
                         }
                         assignPoints(mAuth.getCurrentUser().getUid(),points);
-                        isColumnAAnswerd = true;
                     }else{
                         realTimeDatabase.child(Constants.GAME_COLLECTION)
                                 .child(gameId).child(Constants.SHARED_PREFERENCES_ASOCIJACIJE_ID).child(String.valueOf(currentRound)).child("switchTurn").setValue(String.valueOf(Instant.now().toEpochMilli()));
@@ -820,7 +824,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 if (!switchedToAnotherActivity) {
-                    if (countDownTimer.equals(0) && currentRound == 0 || answerIsCorrect && currentRound == 0) {
+                    if (answerIsCorrect && currentRound == 0) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
