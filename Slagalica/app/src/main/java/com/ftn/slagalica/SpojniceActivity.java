@@ -43,22 +43,20 @@ public class SpojniceActivity extends AppCompatActivity {
 
     private List<Spojnice> spojnice = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
+
     private Runnable countdownRunnable;
+
     private int countdownTime = 30;
     private int currentRound = 0;
     private TextView countdownText1;
     private Button selectedButton;
-
     private CountDownTimer countDownTimer;
-
     private boolean switchedToAnotherActivity = false;
     private DatabaseReference realTimeDatabase;
-
     private FirebaseAuth mAuth;
     private String player1UserId,player2UserId,gameId;
     private Button leftSide1, leftSide2, leftSide3, leftSide4,leftSide5, rightSide1, rightSide2, rightSide3, rightSide4
             ,rightSide5;
-
     private boolean isMyTurn = false;
     private FirebaseFirestore firestore;
 
@@ -398,7 +396,7 @@ public class SpojniceActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors
+
             }
         });
     }

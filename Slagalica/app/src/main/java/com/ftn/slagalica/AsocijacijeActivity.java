@@ -53,34 +53,22 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private TextView countdownText;
     private Integer currentRound = 0;
-
     private Integer currentPhaze = 0;
     private CountDownTimer countDownTimer;
-
     private List<Asocijacija> asocijacije;
     private FirebaseFirestore firestore;
-
     private EditText finalAnswerA, finalAnswerB, finalAnswerC, finalAnswerD, finalSolution;
-
     private Button a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2, d3, d4, propusti;
-
     private boolean switchedToAnotherActivity = false;
     private boolean answerIsCorrect = false;
-
     private FirebaseAuth mAuth;
     private String player1UserId,player2UserId,gameId;
     private boolean isMyTurn = false;
-
     private boolean openFieldInCurrentTurn = false;
-
     private DatabaseReference realTimeDatabase;
-
     private List<String> listAreOpenA = new ArrayList<>();
-
     private List<String> listAreOpenB = new ArrayList<>();
-
     private List<String> listAreOpenC = new ArrayList<>();
-
     private List<String> listAreOpenD = new ArrayList<>();
 
     @SuppressLint("SuspiciousIndentation")

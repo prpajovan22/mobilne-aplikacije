@@ -1,8 +1,11 @@
 package com.ftn.slagalica;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -32,7 +35,7 @@ public class PobednikActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private String player1UserId, player2UserId, gameId;
     private boolean isMyTurn;
-
+    private Button homeButton;
     private TextView player1UsernameTextView, player1PointsTextView,
             player2UsernameTextView, player2PointsTextView,
             winnerUsernameTextView, winnerPointsTextView;
@@ -42,6 +45,8 @@ public class PobednikActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pobednik);
+
+        homeButton = findViewById(R.id.homeButton);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -59,6 +64,14 @@ public class PobednikActivity extends AppCompatActivity {
         player2UserId = preferences.getString(Constants.OPONENT_ID, "");
         isMyTurn = preferences.getBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
         gameId = preferences.getString(Constants.SHARED_PREFERENCES_GAME_ID, "");
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PobednikActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mDatabase.child(Constants.GAME_COLLECTION).child(gameId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -31,7 +31,6 @@ import java.util.UUID;
 
 import firebase_models.GameFirebaseModel;
 import firebase_models.UserFirebaseModel;
-import models.Asocijacija;
 import utils.Constants;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(Constants.SHARED_PREFERENCES_GAME_ID, snapshot.getValue(String.class));
                     editor.putBoolean(Constants.SHARED_PREFERENCES_IS_PLAYER_1, false);
                     editor.apply();
-                    Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
+                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
                     startActivity(intent);
                 }
 
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                                                                         realTimeDatabase.child(Constants.USER_COLLECTION).child(userId).child("gameId").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                             @Override
                                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
+                                                                                Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
                                                                                 SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                                                                                 SharedPreferences.Editor editor = preferences.edit();
                                                                                 editor.putString(Constants.OPONENT_ID, userId);

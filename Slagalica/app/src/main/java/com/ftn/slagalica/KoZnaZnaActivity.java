@@ -54,12 +54,11 @@ public class KoZnaZnaActivity extends AppCompatActivity {
     private Handler handlerForSleep = new Handler(Looper.getMainLooper());
     private FirebaseFirestore firestore;
     private int repetitionCount = 0;
+
     private int pointsPlayer = 0;
     private CountDownTimer countDownTimer;
     private Handler handler = new Handler();
-
     private DatabaseReference realTimeDatabase;
-
     private FirebaseAuth mAuth;
     private String player1UserId;
     private String player2UserId, gameId;
@@ -399,5 +398,4 @@ public class KoZnaZnaActivity extends AppCompatActivity {
             }
         }
     }
-
 }
